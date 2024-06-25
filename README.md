@@ -1,4 +1,5 @@
-PassLock is a simple console-based password generator built on Python.
+# PassLock
+a simple console-based password generator built on Python.
 
 ## Features
 
@@ -14,7 +15,7 @@ PassLock is a simple console-based password generator built on Python.
 
 ### Save Passwords:
 
-- Option to save generated passwords to a file (generated_passwords.txt).
+- Option to save generated passwords to a file ([generated_passwords.txt](generated_passwords.txt)).
 
 ### Example Usage:
 
