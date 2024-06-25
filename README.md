@@ -17,7 +17,27 @@ a simple console-based password generator built on Python.
 
 - Option to save generated passwords to a file ([generated_passwords.txt](generated_passwords.txt)).
 
-### Example Usage:
+
+## How To Use
+
+### 1. **Run the Application**:
+- Clone or [download](https://github.com/jntm7/PassLock/archive/refs/heads/main.zip) the project and navigate to it.
+- Execute the Python script in your terminal or command prompt:
+
+```
+py password.py
+```
+
+### 2. **Customize the Parameters**:
+- Enter the desired password length.
+- Enter the number of each type of character.
+- Specify whether to exclude similar characters.
+- Specify whether to save the generated password to a file.
+
+### 3. **Password Generation**:
+- The generated password and its password strength will be displayed.
+
+## Example Usage:
 
 ```
 Please answer the following questions:
