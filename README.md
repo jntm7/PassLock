@@ -1,7 +1,9 @@
 # PassLock
-A simple GUI that generates customizable passwords.
+
+<img src="https://github.com/jntm7/PassLock/assets/108718802/737c5d25-b073-48dd-98cb-767bdc9b4a38.png" width=5% height=5%> A simple GUI that generates and saves customizable passwords.
 
 ## Features
+
 
 ### Customizable Password Generation
 
