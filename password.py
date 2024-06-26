@@ -1,5 +1,10 @@
 import random
 import string
+import tkinter as tk
+from tkinter import messagebox
+from ctypes import windll
+
+windll.shcore.SetProcessDpiAwareness(1)
 
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
 
@@ -15,8 +20,13 @@ def generate_password(length, num_uppercase, num_lowercase, num_digits, num_spec
         digits = ''.join([c for c in digits if c not in similar_chars])
         special = ''.join([c for c in special if c not in similar_chars])
 
-    total_specified_chars = num_uppercase + num_lowercase + num_digits + num_special
-    if total_specified_chars > length:
+    if num_uppercase > length:
+        raise ValueError("The number of uppercase letters exceeds the password length.")
+    if num_uppercase + num_lowercase > length:
+        raise ValueError("The number of uppercase and lowercase letters combined exceeds the password length.")
+    if num_uppercase + num_lowercase + num_digits > length:
+        raise ValueError("The number of uppercase, lowercase letters, and digits combined exceeds the password length.")
+    if num_uppercase + num_lowercase + num_digits + num_special > length:
         raise ValueError("The total number of specified characters exceeds the password length.")
 
     password_chars = []
@@ -26,7 +36,7 @@ def generate_password(length, num_uppercase, num_lowercase, num_digits, num_spec
     password_chars.extend(random.choices(special, k=num_special))
 
     all_chars = uppercase + lowercase + digits + special
-    remaining_length = length - total_specified_chars
+    remaining_length = length - (num_uppercase + num_lowercase + num_digits + num_special)
     password_chars.extend(random.choices(all_chars, k=remaining_length))
 
     random.shuffle(password_chars)
@@ -72,39 +82,64 @@ def password_strength(password):
         strength = "Moderate"
     return strength
 
-def main():
-    print("==============================================================")
-    print(" " * ((60 - len("Welcome to the Password Generator!")) // 2) + "Welcome to the Password Generator!")
-    print("==============================================================")
-    print()
-    print("Please answer the following questions:")
-    print("--------------------------------------------------------------")
-
+def generate_and_display_password():
     try:
-        length = validate_integer_input("Enter the desired password length: ".ljust(60), min_value=1)
-        num_uppercase = validate_integer_input("Enter the number of uppercase letters: ".ljust(60), min_value=0, max_value=length)
-        num_lowercase = validate_integer_input("Enter the number of lowercase letters: ".ljust(60), min_value=0, max_value=length - num_uppercase)
-        num_digits = validate_integer_input("Enter the number of digits: ".ljust(60), min_value=0, max_value=length - num_uppercase - num_lowercase)
-        num_special = validate_integer_input("Enter the number of special characters: ".ljust(60), min_value=0, max_value=length - num_uppercase - num_lowercase - num_digits)
-        exclude_similar = validate_yes_no_input("Exclude similar characters (O, 0, I, 1, l)? (y/n): ".ljust(60))
+        length = int(length_entry.get())
+        num_uppercase = int(uppercase_entry.get())
+        num_lowercase = int(lowercase_entry.get())
+        num_digits = int(digits_entry.get())
+        num_special = int(special_entry.get())
+        exclude_similar = exclude_similar_var.get()
 
         password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
-        print("--------------------------------------------------------------")
-        print(f"Generated password: {password}")
-        print("--------------------------------------------------------------")
-        print(f"Password strength: {password_strength(password)}")
-        print("--------------------------------------------------------------")
+        strength = password_strength(password)
 
-        save_password = validate_yes_no_input("Would you like to save this password to a file? (y/n): ".ljust(60))
-        if save_password:
+        password_label.config(text=f"Generated password: {password}")
+        strength_label.config(text=f"Password strength: {strength}")
+
+        if save_password_var.get():
             with open("generated_passwords.txt", "a") as file:
                 file.write(password + "\n")
-            print("--------------------------------------------------------------")
-            print("Password successfully saved to generated_passwords.txt")
-            print("--------------------------------------------------------------")
+            messagebox.showinfo("Success", "Password saved to generated_passwords.txt")
 
     except ValueError as e:
-        print(f"Error: {e}")
+        messagebox.showerror("Error", str(e))
 
-if __name__ == "__main__":
-    main()
+app = tk.Tk()
+app.title("Password Generator")
+
+tk.Label(app, text="Enter the desired password length:").grid(row=0, column=0, sticky=tk.W)
+length_entry = tk.Entry(app)
+length_entry.grid(row=0, column=1)
+
+tk.Label(app, text="Enter the number of uppercase letters:").grid(row=1, column=0, sticky=tk.W)
+uppercase_entry = tk.Entry(app)
+uppercase_entry.grid(row=1, column=1)
+
+tk.Label(app, text="Enter the number of lowercase letters:").grid(row=2, column=0, sticky=tk.W)
+lowercase_entry = tk.Entry(app)
+lowercase_entry.grid(row=2, column=1)
+
+tk.Label(app, text="Enter the number of digits:").grid(row=3, column=0, sticky=tk.W)
+digits_entry = tk.Entry(app)
+digits_entry.grid(row=3, column=1)
+
+tk.Label(app, text="Enter the number of special characters:").grid(row=4, column=0, sticky=tk.W)
+special_entry = tk.Entry(app)
+special_entry.grid(row=4, column=1)
+
+exclude_similar_var = tk.BooleanVar()
+tk.Checkbutton(app, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var).grid(row=5, columnspan=2, sticky=tk.W)
+
+save_password_var = tk.BooleanVar()
+tk.Checkbutton(app, text="Save password to file", variable=save_password_var).grid(row=6, columnspan=2, sticky=tk.W)
+
+tk.Button(app, text="Generate Password", command=generate_and_display_password).grid(row=7, columnspan=2)
+
+password_label = tk.Label(app, text="Generated password: ")
+password_label.grid(row=8, columnspan=2)
+
+strength_label = tk.Label(app, text="Password strength: ")
+strength_label.grid(row=9, columnspan=2)
+
+app.mainloop()
