@@ -1,5 +1,5 @@
 # PassLock
-a simple console-based password generator built on Python.
+A simple GUI that generates customizable passwords.
 
 ## Features
 
