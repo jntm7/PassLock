@@ -26,8 +26,10 @@
 
 ## How To Use
 
-Ensure that you have Python 3.6 or newer. 
+Ensure that you have Python 3.6 or newer.
+
 You can download it from the [Python Official Website](https://www.python.org/downloads/).
+
 Tkinter should be included with most Python installations.
 
 #### 1. Clone the Repository
@@ -37,7 +39,7 @@ git clone https://github.com/jntm7/PassLock.git
 cd passlock
 ```
 
-or [download the source files](https://github.com/jntm7/PassLock/archive/refs/heads/main.zip).
+or [download the latest release](https://github.com/jntm7/PassLock/archive/refs/tags/v1.0.zip).
 
 #### 2: Install & Run
 
