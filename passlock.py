@@ -2,13 +2,14 @@ import random
 import string
 import tkinter as tk
 import pyperclip
+import os
+import subprocess
 from tkinter import messagebox
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
 # PASSWORD GENERATION
-
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
 
     uppercase = string.ascii_uppercase
@@ -117,8 +118,25 @@ def generate_and_display_password():
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
 
-# LIGHT / DARK MODE
+def copy_to_clipboard():
+    password = password_output.cget("text")
+    if password:
+        pyperclip.copy(password)
+        messagebox.showinfo("Copied", "Password copied to clipboard!")
+    else:
+        messagebox.showwarning("No Password", "Generate a password first!")
 
+def show_saved_passwords():
+    file_path = "generated_passwords.txt"
+    if os.path.exists(file_path):
+        if os.name == 'nt': # Windows
+            os.startfile(file_path)
+        elif os.name == 'posix': # macOS / Linux
+            subprocess.call(('open', file_path))
+    else:
+        messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
+
+# LIGHT / DARK MODE
 def toggle_dark_mode():
     if dark_mode_var.get():
         bg_color = "black"
@@ -154,8 +172,8 @@ def toggle_dark_mode():
     password_output.config(bg=entry_bg, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
-    copy_button.config(bg=button_bg, fg=button_fg, activebackground=button_bg, 
-                       activeforeground=button_fg)
+    for button in [copy_button, show_passwords_button]:
+        button.config(bg=button_bg, fg=button_fg, activebackground=button_bg, activeforeground=button_fg)
 
     app.config(bg=bg_color)
 
@@ -170,20 +188,14 @@ def update_password_labels():
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
-def copy_to_clipboard():
-    password = password_output.cget("text")
-    if password:
-        pyperclip.copy(password)
-        messagebox.showinfo("Copied", "Password copied to clipboard!")
-    else:
-        messagebox.showwarning("No Password", "Generate a password first!")
-
 # APP GUI
-
 app = tk.Tk()
 app.title("PassLock Password Generator")
 app.geometry("900x675")
 app.resizable(True, True)
+
+icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
+app.iconbitmap(icon_path)
 
 app.columnconfigure(0, weight=1)
 app.columnconfigure(1, weight=1)
@@ -194,7 +206,7 @@ app.rowconfigure(9, weight=1)
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-for i in range(13):
+for i in range(14):
     main_frame.grid_rowconfigure(i, weight=1)
 main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_columnconfigure(1, weight=1)
@@ -252,5 +264,8 @@ strength_label.grid(row=12, column=1, sticky=tk.E)
 
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
 copy_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+
+show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
+show_passwords_button.grid(row=14, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 app.mainloop()
