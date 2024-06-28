@@ -7,8 +7,15 @@
 ### Customizable Password Generation
 
 - Generate passwords of desired length.
-- Specify the number of uppercase letters, lowercase letters, digits, and special characters.
-- Option to exclude similar characters (O, 0, I, 1, l).
+- Specify the number of:
+
+  - uppercase letters `A-Z`
+  - lowercase letters `a-z`
+  - digits `0-9`
+  - special characters ``!"#$%&'()*+, -./:;<=>?@[\]^_`{|}~``
+ 
+- Include/exclude similar characters `O, 0, I, 1, l`
+
 
 ### Password Strength Indicator
 
@@ -23,6 +30,11 @@
 ### Dark Mode
 
 - Option to toggle between Light (default) and Dark mode.
+
+## ⚙️ Example Usage:
+
+![showcase](https://github.com/jntm7/PassLock/assets/108718802/fa678a4e-750e-4ac3-99db-e8ff9d6267b9)
+
 
 ## 🛠️ How To Use
 
@@ -66,28 +78,4 @@ py passlock.py
 - Click `Copy to Clipboard`, to copy the generated password, to be pasted somewhere of your convenience.
 - Click `Show Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
 
-## ⚙️ Example Usage:
 
-```
---------------------------------------------------------------
-Enter the desired password length:                          15
-Enter the number of uppercase letters:                      5
-Enter the number of lowercase letters:                      5
-Enter the number of digits:                                 3
-Enter the number of special characters:                     2
---------------------------------------------------------------
-[✓] Exclude similar characters (O, 0, I, 1, l)
---------------------------------------------------------------
-[✓] Save password to file                                       
---------------------------------------------------------------
-                        Generate Password
---------------------------------------------------------------
-Generated password:                            hF#ic3r4uNV!2KZ
---------------------------------------------------------------
-Password strength:                                 Very Strong
---------------------------------------------------------------
-                    Copy Password to Clipboard
---------------------------------------------------------------
-                       Show Saved Passwords
---------------------------------------------------------------
-```
