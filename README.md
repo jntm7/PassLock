@@ -6,25 +6,22 @@
 
 ### Customizable Password Generation
 
-- Generate passwords of desired length.
-- Specify the number of:
+Generate passwords of desired length by specifying the number of:
+  - uppercase letters: `A-Z`
+  - lowercase letters: `a-z`
+  - digits: `0-9`
+  - special characters: ``!"#$%&'()*+, -./:;<=>?@[\]^_`{|}~``
 
-  - uppercase letters `A-Z`
-  - lowercase letters `a-z`
-  - digits `0-9`
-  - special characters ``!"#$%&'()*+, -./:;<=>?@[\]^_`{|}~``
- 
-- Include/exclude similar characters `O, 0, I, 1, l`
-
+And specifying whether to include/exclude similar characters: `O, 0, I, 1, l`
 
 ### Password Strength Indicator
 
 - Evaluates the strength of the generated password:
-`[Weak - Moderate - Strong - Very Strong]`
+`Weak - Moderate - Strong - Very Strong`
 
 ### Save & View Passwords
 
-- Option to save generated passwords to a file (`generated_passwords.txt`).
+- Option to save generated passwords to a file: `generated_passwords.txt`
 - Option to open `generated_passwords.txt` directly from the program.
 
 ### Dark Mode
@@ -77,5 +74,3 @@ py passlock.py
 - Click `Generate Password`, to display the generated password and its password strength, based on the parameters chosen.
 - Click `Copy to Clipboard`, to copy the generated password, to be pasted somewhere of your convenience.
 - Click `Show Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
-
-
