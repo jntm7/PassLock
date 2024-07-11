@@ -64,6 +64,12 @@ pip install pyperclip
 py passlock.py
 ```
 
+OR 
+
+- Run the executable:
+
+Simply open `passlock.exe` to launch the application.
+
 ### Enter Custom Parameters
 - Enter the desired password length.
 - Enter the number of each type of character.
