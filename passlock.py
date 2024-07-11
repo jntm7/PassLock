@@ -194,8 +194,12 @@ app.title("PassLock Password Generator")
 app.geometry("900x675")
 app.resizable(True, True)
 
-icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
-app.iconbitmap(icon_path)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+icon_path = os.path.join(script_dir, "icon.ico")
+try:
+    app.iconbitmap(icon_path)
+except tk.TclError:
+    print(f"Warning: Could not load icon from {icon_path}")
 
 app.columnconfigure(0, weight=1)
 app.columnconfigure(1, weight=1)

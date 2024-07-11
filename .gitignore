@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 .idea/
 generated_passwords.txt
+*.toc
+*.pyz
+*.pkg
+*.spec
+build/
