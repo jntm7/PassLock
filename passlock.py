@@ -214,6 +214,7 @@ def update_password_labels():
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
+# FONT SIZE
 def change_font_size(size):
     global current_font_size
     current_font_size = size
@@ -223,10 +224,25 @@ def change_font_size(size):
     text_font.configure(size=current_font_size)
     app.update()
 
+# WINDOW OPACITY
 def change_opacity(opacity):
     global current_opacity
     current_opacity = opacity
     app.attributes('-alpha', current_opacity)
+
+# OPACITY SLIDER
+def open_opacity_slider():
+    opacity_window = tk.Toplevel(app)
+    opacity_window.title("Adjust Opacity")
+    opacity_window.geometry("300x100")
+    
+    opacity_slider = ttk.Scale(opacity_window, from_=0.1, to=1.0, orient='horizontal', 
+                               command=lambda v: change_opacity(float(v)))
+    opacity_slider.set(current_opacity)
+    opacity_slider.pack(pady=20, padx=10, fill='x')
+
+    ok_button = ttk.Button(opacity_window, text="OK", command=opacity_window.destroy)
+    ok_button.pack(pady=10)
 
 # APP GUI
 app = tk.Tk()
@@ -252,18 +268,36 @@ app.rowconfigure(9, weight=1)
 menubar = Menu(app)
 app.config(menu=menubar)
 
+# FILE
+
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="Exit", command=exit_app)
+
+# PASSWORD
 
 password_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Password", menu=password_menu)
 password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
 password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
 
+# APPEARANCE
+
 appearance_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Appearance", menu=appearance_menu)
+
+font_size_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
+font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
+font_size_menu.add_command(label="Default", command=lambda: change_font_size(10))
+font_size_menu.add_command(label="Medium", command=lambda: change_font_size(12))
+font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
+
 appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+
+appearance_menu.add_command(label="Adjust Opacity", command=open_opacity_slider)
+
+# MAIN FRAME
 
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
