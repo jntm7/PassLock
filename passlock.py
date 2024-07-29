@@ -4,13 +4,17 @@ import tkinter as tk
 import pyperclip
 import os
 import subprocess
-from tkinter import messagebox, Menu
+from tkinter import messagebox, Menu, font as tkfont
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
+# DEFAULT SETTINGS
 is_dark_mode = False
+current_font_size = 10
+current_opacity = 1.0
 
+# EXIT APPLICATION
 def exit_app():
     app.quit
 
@@ -209,6 +213,15 @@ def update_password_labels():
     password_output.config(bg=bg_color, fg=fg_color)
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
+
+def change_font_size(size):
+    global current_font_size
+    current_font_size = size
+    default_font = tkfont.nametofont("TkDefaultFont")
+    default_font.configure(size=current_font_size)
+    text_font = tkfont.nametofont("TkTextFont")
+    text_font.configure(size=current_font_size)
+    app.update()
 
 # APP GUI
 app = tk.Tk()
