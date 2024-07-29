@@ -223,6 +223,11 @@ def change_font_size(size):
     text_font.configure(size=current_font_size)
     app.update()
 
+def change_opacity(opacity):
+    global current_opacity
+    current_opacity = opacity
+    app.attributes('-alpha', current_opacity)
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
