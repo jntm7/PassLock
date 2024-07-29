@@ -9,6 +9,8 @@ from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
+is_dark_mode = False
+
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
 
@@ -138,7 +140,10 @@ def show_saved_passwords():
 
 # LIGHT / DARK MODE
 def toggle_dark_mode():
-    if dark_mode_var.get():
+    global is_dark_mode
+    is_dark_mode = not is_dark_mode
+
+    if is_dark_mode:
         bg_color = "black"
         fg_color = "white"
         entry_bg = "gray15"
@@ -180,8 +185,8 @@ def toggle_dark_mode():
     update_password_labels()
 
 def update_password_labels():
-    bg_color = "black" if dark_mode_var.get() else "SystemButtonFace"
-    fg_color = "white" if dark_mode_var.get() else "black"
+    bg_color = "black" if is_dark_mode.get() else "SystemButtonFace"
+    fg_color = "white" if is_dark_mode.get() else "black"
     
     password_label.config(bg=bg_color, fg=fg_color)
     password_output.config(bg=bg_color, fg=fg_color)
@@ -249,27 +254,26 @@ save_password_var = tk.BooleanVar()
 save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
 save_password_checkbutton.grid(row=8, columnspan=2, sticky=tk.W)
 
-dark_mode_var = tk.BooleanVar()
-dark_mode_checkbutton = tk.Checkbutton(main_frame, text="Dark mode", variable=dark_mode_var, command=toggle_dark_mode)
-dark_mode_checkbutton.grid(row=9, columnspan=2, sticky=tk.W)
-
 generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
-generate_button.grid(row=10, column=0, columnspan=2, pady=10, sticky=tk.EW)
+generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 password_label = tk.Label(main_frame, text="Generated Password:")
-password_label.grid(row=11, column=0, sticky=tk.W)
+password_label.grid(row=10, column=0, sticky=tk.W)
 password_output = tk.Label(main_frame, text="")
-password_output.grid(row=11, column=1, sticky=tk.E)
+password_output.grid(row=10, column=1, sticky=tk.E)
 
 strength_label_text = tk.Label(main_frame, text="Password Strength:")
-strength_label_text.grid(row=12, column=0, sticky=tk.W)
+strength_label_text.grid(row=11, column=0, sticky=tk.W)
 strength_label = tk.Label(main_frame, text="")
-strength_label.grid(row=12, column=1, sticky=tk.E)
+strength_label.grid(row=11, column=1, sticky=tk.E)
 
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
-show_passwords_button.grid(row=14, column=0, columnspan=2, pady=10, sticky=tk.EW)
+show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+
+dark_mode_button = tk.Button(main_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
+dark_mode_button.grid(row=14, columnspan=2, pady=10, sticky=tk.EW)
 
 app.mainloop()
