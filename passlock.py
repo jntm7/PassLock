@@ -4,12 +4,15 @@ import tkinter as tk
 import pyperclip
 import os
 import subprocess
-from tkinter import messagebox
+from tkinter import messagebox, Menu
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
 is_dark_mode = False
+
+def exit_app():
+    app.quit
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -149,12 +152,21 @@ def toggle_dark_mode():
         entry_bg = "gray15"
         button_bg = "gray20"
         button_fg = "white"
+        menu_bg = "gray10"
+        menu_fg = "white"
+
     else:
         bg_color = "SystemButtonFace"
         fg_color = "black"
         entry_bg = "white"
         button_bg = "SystemButtonFace"
         button_fg = "black"
+        menu_bg = "SystemButtonFace"
+        menu_fg = "black"
+
+    menubar.config(bg=menu_bg, fg=menu_fg)
+    for menu in [file_menu, password_menu, appearance_menu]:
+        menu.config(bg=menu_bg, fg=menu_fg)
 
     main_frame.config(bg=bg_color)
     for widget in main_frame.winfo_children():
@@ -211,6 +223,24 @@ app.columnconfigure(1, weight=1)
 app.rowconfigure(7, weight=1)
 app.rowconfigure(8, weight=1)
 app.rowconfigure(9, weight=1)
+
+## MENU BAR
+
+menubar = Menu(app)
+app.config(menu=menubar)
+
+file_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Exit", command=exit_app)
+
+password_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Password", menu=password_menu)
+password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
+password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
+
+appearance_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Appearance", menu=appearance_menu)
+appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
@@ -272,8 +302,5 @@ copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
 show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
-
-dark_mode_button = tk.Button(main_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
-dark_mode_button.grid(row=14, columnspan=2, pady=10, sticky=tk.EW)
 
 app.mainloop()
