@@ -134,10 +134,15 @@ def copy_to_clipboard():
 def show_saved_passwords():
     file_path = "generated_passwords.txt"
     if os.path.exists(file_path):
-        if os.name == 'nt': # Windows
+        # Windows
+        if os.name == 'nt':
             os.startfile(file_path)
-        elif os.name == 'posix': # macOS / Linux
-            subprocess.call(('open', file_path))
+        # MacOS
+        elif platform.system() == 'Darwin':
+            subprocess.Popen(['open', file_path])
+        # Linux
+        elif os.name == 'posix':
+            subprocess.call(('xdg-open', file_path))
     else:
         messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
 
