@@ -218,6 +218,10 @@ def show_saved_passwords():
 # LIGHT / DARK MODE
 def toggle_dark_mode():
     global is_dark_mode
+    if current_theme != "Default":
+        messagebox.showinfo("Theme Conflict", "Dark mode is only available in the Default theme.")
+        return
+
     is_dark_mode = not is_dark_mode
 
     if is_dark_mode:
@@ -226,8 +230,6 @@ def toggle_dark_mode():
         entry_bg = "gray15"
         button_bg = "gray20"
         button_fg = "white"
-        menu_bg = "gray10"
-        menu_fg = "white"
 
     else:
         bg_color = "SystemButtonFace"
@@ -235,12 +237,10 @@ def toggle_dark_mode():
         entry_bg = "white"
         button_bg = "SystemButtonFace"
         button_fg = "black"
-        menu_bg = "SystemButtonFace"
-        menu_fg = "black"
 
-    menubar.config(bg=menu_bg, fg=menu_fg)
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu):
-        menu.config(bg=menu_bg, fg=menu_fg)
+    menubar.config(bg=bg_color, fg=fg_color)
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, opacity_menu, theme_menu):
+        menu.config(bg=bg_color, fg=fg_color)
 
     main_frame.config(bg=bg_color)
     for widget in main_frame.winfo_children():
