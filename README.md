@@ -35,13 +35,11 @@ And specifying whether to include/exclude similar characters: `O, 0, I, 1, l`
 
 - Option to select from 10 different themes: "Arctic", "Bamboo", "Chocolate", "Forest", "Lavender", "Mint", "Ocean", "Peach", "Slate", "Sunset".
 
+![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
 
 ## ⚙️ Example Usage:
 
-
 ![passlock-demo](https://github.com/user-attachments/assets/d39247b2-a3f7-4735-aec6-11463955abd1)
-
-![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
 
 ## 🛠️ How To Use
 
