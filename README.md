@@ -38,8 +38,7 @@ And specifying whether to include/exclude similar characters: `O, 0, I, 1, l`
 
 ## ⚙️ Example Usage:
 
-![showcase](https://github.com/jntm7/PassLock/assets/108718802/fa678a4e-750e-4ac3-99db-e8ff9d6267b9)
-
+![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
 
 ## 🛠️ How To Use
 
