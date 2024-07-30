@@ -11,7 +11,6 @@ windll.shcore.SetProcessDpiAwareness(1)
 
 # DEFAULT SETTINGS
 is_dark_mode = False
-
 def reset_to_default():
     global current_font_size, current_opacity
     current_font_size = 10
@@ -23,7 +22,6 @@ def reset_to_default():
         toggle_dark_mode()
 
 # THEMES
-
 themes = {
     "Default": {
         "bg": "SystemButtonFace", 
@@ -31,17 +29,59 @@ themes = {
         "entry_bg": "white", 
         "button_bg": "SystemButtonFace", 
         "button_fg": "black"},
+    "Arctic":{
+        "bg": "#E1E8ED", 
+        "fg": "#2E4057", 
+        "entry_bg": "#D4E6F1", 
+        "button_bg": "#A9C4E2", 
+        "button_fg": "#FFFFFF"},
     "Bamboo":{
         "bg": "#E3DAC9", 
         "fg": "#4B5320", 
         "entry_bg": "#D9EAD3", 
         "button_bg": "#8F9779", 
         "button_fg": "#3B3B3B"},
-    "Arctic":{
-        "bg": "#E1E8ED", 
-        "fg": "#2E4057", 
-        "entry_bg": "#D4E6F1", 
-        "button_bg": "#A9C4E2", 
+    "Chocolate":{
+        "bg": "#D2B48C", 
+        "fg": "#3B1C14", 
+        "entry_bg": "#F4A460", 
+        "button_bg": "#8B4513", 
+        "button_fg": "#FFFFFF"},
+    "Forest":{
+        "bg": "#F0FFF0", 
+        "fg": "#229B22", 
+        "entry_bg": "#98FB98", 
+        "button_bg": "#2E9B57", 
+        "button_fg": "#FFFFFF"},
+    "Lavender":{
+        "bg": "#E6E6FA", 
+        "fg": "#4B0082", 
+        "entry_bg": "#F5F5F5", 
+        "button_bg": "#9370DB", 
+        "button_fg": "#FFFFFF"},
+    "Mint":{
+        "bg": "#F5FFFA", 
+        "fg": "#006400", 
+        "entry_bg": "#E4F8F7", 
+        "button_bg": "#98FF98", 
+        "button_fg": "#006400"},
+    "Ocean":{
+        "bg": "#E0FFFF", 
+        "fg": "#2F4F4F", 
+        "entry_bg": "#AFEEEE", 
+        "button_bg": "#00CED1", 
+        "button_fg": "#FFFFFF"},
+    "Peach":{
+        "bg": "#FFE5B4", 
+        "fg": "#D2691E", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FFB347", 
+        "button_fg": "#FFFFFF"},
+    "Slate":{
+        "bg": "#708090", 
+        "fg": "#FFFFFF", 
+        "entry_bg": "#C0C0C0", 
+        "button_bg": "#778899", 
         "button_fg": "#FFFFFF"},
     "Sunset":{
         "bg": "#FFCCBC", 
@@ -49,11 +89,10 @@ themes = {
         "entry_bg": "#FFDAB9", 
         "button_bg": "#FF7043", 
         "button_fg": "#FFFFFF"},
+
     }
 
 current_theme = "Default"
-
-
 
 # EXIT APPLICATION
 def exit_app():
@@ -278,7 +317,6 @@ def update_password_labels():
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
-
 # FONT SIZE
 def change_font_size(size):
     global current_font_size
@@ -377,8 +415,16 @@ appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
 theme_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Themes", menu=theme_menu)
 theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
-theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
+theme_menu.add_separator()
 theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
+theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
+theme_menu.add_command(label="Chocolate", command=lambda: change_theme("Chocolate"))
+theme_menu.add_command(label="Forest", command=lambda: change_theme("Forest"))
+theme_menu.add_command(label="Lavender", command=lambda: change_theme("Lavender"))
+theme_menu.add_command(label="Mint", command=lambda: change_theme("Mint"))
+theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
+theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
+theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
 theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
 
 ################################################################
