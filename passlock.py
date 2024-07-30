@@ -174,7 +174,7 @@ def toggle_dark_mode():
         menu_fg = "black"
 
     menubar.config(bg=menu_bg, fg=menu_fg)
-    for menu in [file_menu, password_menu, appearance_menu]:
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu):
         menu.config(bg=menu_bg, fg=menu_fg)
 
     main_frame.config(bg=bg_color)
@@ -236,19 +236,17 @@ def open_opacity_slider():
     opacity_window.title("Adjust Opacity")
     opacity_window.geometry("300x100")
     
-    opacity_slider = ttk.Scale(opacity_window, from_=0.1, to=1.0, orient='horizontal', 
-                               command=lambda v: change_opacity(float(v)))
-    opacity_slider.set(current_opacity)
+    opacity_slider = tk.Scale(opacity_window, from_=0.1, to=1.0, orient='horizontal', command=change_opacity, value=current_opacity)
     opacity_slider.pack(pady=20, padx=10, fill='x')
 
-    ok_button = ttk.Button(opacity_window, text="OK", command=opacity_window.destroy)
+    ok_button = tk.Button(opacity_window, text="OK", command=opacity_window.destroy)
     ok_button.pack(pady=10)
 
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
 app.geometry("900x675")
-app.resizable(True, True)
+app.resizable(False, False)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 icon_path = os.path.join(script_dir, "icon.ico")
