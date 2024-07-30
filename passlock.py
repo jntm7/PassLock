@@ -18,7 +18,7 @@ def reset_to_default():
     current_opacity = 1.0
     change_font_size(current_font_size)
     change_opacity(current_opacity)
-    change_window_size(900, 675)
+    change_window_size(500, 600)
     if is_dark_mode:
         toggle_dark_mode()
 
@@ -70,7 +70,9 @@ def change_theme(theme_name):
         elif isinstance(widget, tk.Entry):
             widget.config(bg="white", fg=theme["fg"])
         elif isinstance(widget, tk.Button):
-            widget.config(bg=theme["button"], fg=theme["fg"])
+            widget.config(bg=theme["button_bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Checkbutton):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
     
     password_output.config(bg=theme["bg"], fg=theme["fg"])
 
@@ -305,7 +307,7 @@ def change_window_size(width, height):
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
-app.geometry("900x675")
+app.geometry("500x600")
 app.resizable(False, False)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -346,14 +348,6 @@ password_menu.add_command(label="Show Saved Passwords", command=show_saved_passw
 appearance_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Appearance", menu=appearance_menu)
 
-
-theme_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Themes", menu=theme_menu)
-theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
-theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
-theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
-theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
-
 appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 appearance_menu.add_separator()
 
@@ -365,19 +359,30 @@ font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
 
 window_size_menu = Menu(appearance_menu, tearoff=0)
 appearance_menu.add_cascade(label="Window Size", menu=window_size_menu)
-window_size_menu.add_command(label="Small", command=lambda: change_window_size(720, 540))
-window_size_menu.add_command(label="Medium", command=lambda: change_window_size(900, 675))
-window_size_menu.add_command(label="Large", command=lambda: change_window_size(1080, 810))
+window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
+window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
+window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
 
 opacity_menu = Menu(appearance_menu, tearoff=0)
 appearance_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
-opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.25))
+opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.50))
 opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
+opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
 opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
+opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
 opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
 
 appearance_menu.add_separator()
 appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
+
+# THEME
+
+theme_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Themes", menu=theme_menu)
+theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
+theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
+theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
 
 ################################################################
 
