@@ -288,6 +288,8 @@ password_menu.add_command(label="Show Saved Passwords", command=show_saved_passw
 appearance_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Appearance", menu=appearance_menu)
 
+appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+
 font_size_menu = Menu(appearance_menu, tearoff=0)
 appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
 font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
@@ -300,9 +302,9 @@ window_size_menu.add_command(label="Small", command=lambda: change_window_size(7
 window_size_menu.add_command(label="Medium", command=lambda: change_window_size(900, 675))
 window_size_menu.add_command(label="Large", command=lambda: change_window_size(1080, 810))
 
-appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+appearance_menu.add_command(label="Window Opacity", command=open_opacity_slider)
 
-appearance_menu.add_command(label="Adjust Opacity", command=open_opacity_slider)
+
 
 # MAIN FRAME
 
