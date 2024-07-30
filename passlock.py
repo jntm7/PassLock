@@ -10,13 +10,21 @@ from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
 # DEFAULT SETTINGS
-is_dark_mode = False
-current_font_size = 10
-current_opacity = 1.0
 
+def reset_to_default():
+    global current_font_size, current_opacity
+    current_font_size = 10
+    current_opacity = 1.0
+    change_font_size(current_font_size)
+    change_opacity(current_opacity)
+    change_window_size(900, 675)
+    if is_dark_mode:
+        toggle_dark_mode()
+    
 # EXIT APPLICATION
 def exit_app():
-    app.quit
+    app.quit()
+    app.destroy()
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -230,21 +238,11 @@ def change_opacity(opacity):
     current_opacity = opacity
     app.attributes('-alpha', current_opacity)
 
-# OPACITY SLIDER
-def open_opacity_slider():
-    opacity_window = tk.Toplevel(app)
-    opacity_window.title("Adjust Opacity")
-    opacity_window.geometry("300x100")
-    
-    opacity_slider = tk.Scale(opacity_window, from_=0.1, to=1.0, orient='horizontal', command=change_opacity, value=current_opacity)
-    opacity_slider.pack(pady=20, padx=10, fill='x')
-
-    ok_button = tk.Button(opacity_window, text="OK", command=opacity_window.destroy)
-    ok_button.pack(pady=10)
-
 # WINDOW RESIZER
 def change_window_size(width, height):
     app.geometry(f"{width}x{height}")
+
+################################################################
 
 # APP GUI
 app = tk.Tk()
@@ -264,6 +262,8 @@ app.columnconfigure(1, weight=1)
 app.rowconfigure(7, weight=1)
 app.rowconfigure(8, weight=1)
 app.rowconfigure(9, weight=1)
+
+################################################################
 
 ## MENU BAR
 
@@ -302,9 +302,17 @@ window_size_menu.add_command(label="Small", command=lambda: change_window_size(7
 window_size_menu.add_command(label="Medium", command=lambda: change_window_size(900, 675))
 window_size_menu.add_command(label="Large", command=lambda: change_window_size(1080, 810))
 
-appearance_menu.add_command(label="Window Opacity", command=open_opacity_slider)
+opacity_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
+opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.25))
+opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
+opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
+opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
 
+appearance_menu.add_separator()
+appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
 
+################################################################
 
 # MAIN FRAME
 
