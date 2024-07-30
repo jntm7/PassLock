@@ -24,9 +24,17 @@ And specifying whether to include/exclude similar characters: `O, 0, I, 1, l`
 - Option to save generated passwords to a file: `generated_passwords.txt`
 - Option to open `generated_passwords.txt` directly from the program.
 
-### Dark Mode
+### Window Customization
 
-- Option to toggle between Light (default) and Dark mode.
+- Option to toggle between light mode (default) and dark mode
+- Option to change font size: small, medium (default), large
+- Option to change window size: small, medium (default), large
+- Option to change window opacity: 25%, 50%, 65%, 75%, 85%, 100% (default)
+
+#### Themes
+
+- Option to select from 10 different themes: "Arctic", "Bamboo", "Chocolate", "Forest", "Lavender", "Mint", "Ocean", "Peach", "Slate", "Sunset".
+
 
 ## ⚙️ Example Usage:
 
