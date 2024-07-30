@@ -404,12 +404,6 @@ file_menu.add_command(label="Exit", command=exit_app)
 options_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Options", menu=options_menu)
 
-presets_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Presets", menu=presets_menu)
-presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
-presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
-presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
-
 font_size_menu = Menu(options_menu, tearoff=0)
 options_menu.add_cascade(label="Font Size", menu=font_size_menu)
 font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
@@ -430,18 +424,19 @@ opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
 opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
 opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
 opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
-
 options_menu.add_separator()
+
+presets_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Presets", menu=presets_menu)
+presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
+presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
+presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
 options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
 # THEME
 
 theme_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Themes", menu=theme_menu)
-theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
-theme_menu.add_separator()
-theme_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
-theme_menu.add_separator()
 theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
 theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
 theme_menu.add_command(label="Chocolate", command=lambda: change_theme("Chocolate"))
@@ -452,13 +447,16 @@ theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
 theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
 theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
 theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+theme_menu.add_separator()
+theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
 
 # PASSWORD
 
 password_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Password", menu=password_menu)
 password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
-password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
+password_menu.add_command(label="Open Passwords", command=show_saved_passwords)
 
 # TOOLS
 
