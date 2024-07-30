@@ -5,7 +5,7 @@ import pyperclip
 import os
 import subprocess
 import json
-from tkinter import messagebox, Menu, font as tkfont
+from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
 
 # DEFAULT SETTINGS
@@ -156,6 +156,27 @@ def generate_and_display_password():
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
 
+
+# SAVE PASSWORD
+current_file_path = None
+
+def save_password():
+    global current_file_path
+    if current_file_path:
+        with open(current_file_path, "a") as file:
+            file.write(password_output.cget("text") + "\n")
+        messagebox.showinfo("Success", f"Password saved to {current_file_path}")
+    else:
+        save_password_as()
+
+def save_password_as():
+    global current_file_path
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        current_file_path = file_path
+        save_password()
+
+
 def copy_to_clipboard():
     password = password_output.cget("text")
     if password:
@@ -219,7 +240,7 @@ def toggle_dark_mode():
     strength_label.config(bg=bg_color, fg=fg_color)
 
     menubar.config(bg=bg_color, fg=fg_color)
-    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, presets_menu):
         menu.config(bg=bg_color, fg=fg_color)
 
     for window in app.winfo_children():
@@ -253,7 +274,7 @@ def change_theme(theme_name):
     strength_label.config(bg=theme["bg"], fg=theme["fg"])
 
     menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu):
         menu.config(bg=theme["bg"], fg=theme["fg"])
 
     for window in app.winfo_children():
@@ -374,12 +395,20 @@ app.config(menu=menubar)
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="Reset", command=reset_form)
+file_menu.add_command(label="Save", command=save_password)
+file_menu.add_command(label="Save As", command=save_password_as)
 file_menu.add_command(label="Exit", command=exit_app)
 
 # OPTIONS
 
 options_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Options", menu=options_menu)
+
+presets_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Presets", menu=presets_menu)
+presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
+presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
+presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
 
 font_size_menu = Menu(options_menu, tearoff=0)
 options_menu.add_cascade(label="Font Size", menu=font_size_menu)
