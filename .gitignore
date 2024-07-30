@@ -7,4 +7,3 @@ generated_passwords.txt
 *.pkg
 *.spec
 build/
-/dist
