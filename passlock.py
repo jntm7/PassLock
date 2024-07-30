@@ -4,12 +4,12 @@ import tkinter as tk
 import pyperclip
 import os
 import subprocess
-from tkinter import messagebox, Menu, font as tkfont
+import json
+from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
 
-windll.shcore.SetProcessDpiAwareness(1)
-
 # DEFAULT SETTINGS
+windll.shcore.SetProcessDpiAwareness(1)
 is_dark_mode = False
 def reset_to_default():
     global current_font_size, current_opacity
@@ -21,78 +21,27 @@ def reset_to_default():
     if is_dark_mode:
         toggle_dark_mode()
 
-# THEMES
-themes = {
-    "Default": {
-        "bg": "SystemButtonFace", 
-        "fg": "black", 
-        "entry_bg": "white", 
-        "button_bg": "SystemButtonFace", 
-        "button_fg": "black"},
-    "Arctic":{
-        "bg": "#E1E8ED", 
-        "fg": "#2E4057", 
-        "entry_bg": "#D4E6F1", 
-        "button_bg": "#A9C4E2", 
-        "button_fg": "#FFFFFF"},
-    "Bamboo":{
-        "bg": "#E3DAC9", 
-        "fg": "#4B5320", 
-        "entry_bg": "#D9EAD3", 
-        "button_bg": "#8F9779", 
-        "button_fg": "#3B3B3B"},
-    "Chocolate":{
-        "bg": "#D2B48C", 
-        "fg": "#3B1C14", 
-        "entry_bg": "#F4A460", 
-        "button_bg": "#8B4513", 
-        "button_fg": "#FFFFFF"},
-    "Forest":{
-        "bg": "#F0FFF0", 
-        "fg": "#229B22", 
-        "entry_bg": "#98FB98", 
-        "button_bg": "#2E9B57", 
-        "button_fg": "#FFFFFF"},
-    "Lavender":{
-        "bg": "#E6E6FA", 
-        "fg": "#4B0082", 
-        "entry_bg": "#F5F5F5", 
-        "button_bg": "#9370DB", 
-        "button_fg": "#FFFFFF"},
-    "Mint":{
-        "bg": "#F5FFFA", 
-        "fg": "#006400", 
-        "entry_bg": "#E4F8F7", 
-        "button_bg": "#98FF98", 
-        "button_fg": "#006400"},
-    "Ocean":{
-        "bg": "#E0FFFF", 
-        "fg": "#2F4F4F", 
-        "entry_bg": "#AFEEEE", 
-        "button_bg": "#00CED1", 
-        "button_fg": "#FFFFFF"},
-    "Peach":{
-        "bg": "#FFE5B4", 
-        "fg": "#D2691E", 
-        "entry_bg": "#FFDAB9", 
-        "button_bg": "#FFB347", 
-        "button_fg": "#FFFFFF"},
-    "Slate":{
-        "bg": "#708090", 
-        "fg": "#FFFFFF", 
-        "entry_bg": "#C0C0C0", 
-        "button_bg": "#778899", 
-        "button_fg": "#FFFFFF"},
-    "Sunset":{
-        "bg": "#FFCCBC", 
-        "fg": "#3B1C32", 
-        "entry_bg": "#FFDAB9", 
-        "button_bg": "#FF7043", 
-        "button_fg": "#FFFFFF"},
+# LOAD THEMES
+with open("themes.json", "r") as file:
+    themes = json.load(file)
 
-    }
-
+# DEFAULT THEME
 current_theme = "Default"
+
+# RESET ENTRY FIELDS
+def reset_form():
+
+    length_entry.delete(0, tk.END)
+    uppercase_entry.delete(0, tk.END)
+    lowercase_entry.delete(0, tk.END)
+    digits_entry.delete(0, tk.END)
+    special_entry.delete(0, tk.END)
+    
+    password_output.config(text="")
+    strength_label.config(text="")
+    
+    exclude_similar_var.set(False)
+    save_password_var.set(False)
 
 # EXIT APPLICATION
 def exit_app():
@@ -207,6 +156,27 @@ def generate_and_display_password():
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
 
+
+# SAVE PASSWORD
+current_file_path = None
+
+def save_password():
+    global current_file_path
+    if current_file_path:
+        with open(current_file_path, "a") as file:
+            file.write(password_output.cget("text") + "\n")
+        messagebox.showinfo("Success", f"Password saved to {current_file_path}")
+    else:
+        save_password_as()
+
+def save_password_as():
+    global current_file_path
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        current_file_path = file_path
+        save_password()
+
+
 def copy_to_clipboard():
     password = password_output.cget("text")
     if password:
@@ -270,8 +240,12 @@ def toggle_dark_mode():
     strength_label.config(bg=bg_color, fg=fg_color)
 
     menubar.config(bg=bg_color, fg=fg_color)
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, presets_menu):
         menu.config(bg=bg_color, fg=fg_color)
+
+    for window in app.winfo_children():
+        if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
+            window.update_theme("Default")
 
 def change_theme(theme_name):
     global current_theme, is_dark_mode
@@ -300,8 +274,12 @@ def change_theme(theme_name):
     strength_label.config(bg=theme["bg"], fg=theme["fg"])
 
     menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu):
         menu.config(bg=theme["bg"], fg=theme["fg"])
+
+    for window in app.winfo_children():
+        if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
+            window.update_theme(theme_name)
 
 def reset_dark_mode_to_default():
     global is_dark_mode
@@ -339,6 +317,53 @@ def change_window_size(width, height):
 
 ################################################################
 
+# PASSWORD STRENGTH CHECKER
+
+def open_password_checker():
+    checker_window = tk.Toplevel(app)
+    checker_window.title("Password Strength Checker")
+    checker_window.geometry("300x250")
+    checker_window.resizable(False, False)
+
+    theme = themes[current_theme]
+    checker_window.config(bg=theme["bg"])
+
+    tk.Label(checker_window, text="Enter a password to check:", bg=theme["bg"], fg=theme["fg"]).pack(pady=10)
+    password_entry = tk.Entry(checker_window, show="*", width=30)
+    password_entry.pack(pady=5)
+
+    result_label = tk.Label(checker_window, text="", bg=theme["bg"], fg=theme["fg"])
+    result_label.pack(pady=10)
+
+    canvas = tk.Canvas(checker_window, width=200, height=20, bg=theme["bg"], highlightthickness=0)
+    canvas.pack(pady=10)
+
+    def check_strength():
+        password = password_entry.get()
+        strength = password_strength(password)
+        result_label.config(text=f"Password Strength: {strength}")
+
+        strength_colors = {"Weak": "red", "Moderate": "yellow", "Strong": "light green", "Very Strong": "dark green"}
+        strength_values = {"Weak": 50, "Moderate": 100, "Strong": 150, "Very Strong": 200}
+
+        canvas.delete("all")
+        canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
+
+    check_button = tk.Button(checker_window, text="Check Strength", command=check_strength, bg=theme["button_bg"], fg=theme["button_fg"])
+    check_button.pack(pady=10)
+
+    def update_checker_theme(new_theme):
+        theme = themes[new_theme]
+        checker_window.config(bg=theme["bg"])
+        for widget in checker_window.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.config(bg=theme["bg"], fg=theme["fg"])
+            elif isinstance(widget, tk.Button):
+                widget.config(bg=theme["button_bg"], fg=theme["button_fg"])
+        canvas.config(bg=theme["bg"])
+
+    checker_window.update_theme = update_checker_theme
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
@@ -369,53 +394,49 @@ app.config(menu=menubar)
 
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Reset", command=reset_form)
+file_menu.add_command(label="Save", command=save_password)
+file_menu.add_command(label="Save As", command=save_password_as)
 file_menu.add_command(label="Exit", command=exit_app)
 
-# PASSWORD
+# OPTIONS
 
-password_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Password", menu=password_menu)
-password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
-password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
+options_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Options", menu=options_menu)
 
-# APPEARANCE
-
-appearance_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Appearance", menu=appearance_menu)
-
-appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
-appearance_menu.add_separator()
-
-font_size_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
+font_size_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Font Size", menu=font_size_menu)
 font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
 font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
 font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
 
-window_size_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Window Size", menu=window_size_menu)
+window_size_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Window Size", menu=window_size_menu)
 window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
 window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
 window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
 
-opacity_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
-opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.50))
+opacity_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
+opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.25))
 opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
 opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
 opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
 opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
 opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
+options_menu.add_separator()
 
-appearance_menu.add_separator()
-appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
+presets_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Presets", menu=presets_menu)
+presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
+presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
+presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
+options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
 # THEME
 
 theme_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Themes", menu=theme_menu)
-theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
-theme_menu.add_separator()
 theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
 theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
 theme_menu.add_command(label="Chocolate", command=lambda: change_theme("Chocolate"))
@@ -426,6 +447,22 @@ theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
 theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
 theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
 theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+theme_menu.add_separator()
+theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
+
+# PASSWORD
+
+password_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Password", menu=password_menu)
+password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
+password_menu.add_command(label="Open Passwords", command=show_saved_passwords)
+
+# TOOLS
+
+tools_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Tools", menu=tools_menu)
+tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 
 ################################################################
 

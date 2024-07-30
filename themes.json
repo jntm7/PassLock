@@ -1,0 +1,68 @@
+{
+    "Default": {
+        "bg": "SystemButtonFace", 
+        "fg": "black", 
+        "entry_bg": "white", 
+        "button_bg": "SystemButtonFace", 
+        "button_fg": "black"},
+    "Arctic":{
+        "bg": "#E1E8ED", 
+        "fg": "#2E4057", 
+        "entry_bg": "#D4E6F1", 
+        "button_bg": "#A9C4E2", 
+        "button_fg": "#FFFFFF"},
+    "Bamboo":{
+        "bg": "#E3DAC9", 
+        "fg": "#4B5320", 
+        "entry_bg": "#D9EAD3", 
+        "button_bg": "#8F9779", 
+        "button_fg": "#3B3B3B"},
+    "Chocolate":{
+        "bg": "#D2B48C", 
+        "fg": "#3B1C14", 
+        "entry_bg": "#F4A460", 
+        "button_bg": "#8B4513", 
+        "button_fg": "#FFFFFF"},
+    "Forest":{
+        "bg": "#F0FFF0", 
+        "fg": "#229B22", 
+        "entry_bg": "#98FB98", 
+        "button_bg": "#2E9B57", 
+        "button_fg": "#FFFFFF"},
+    "Lavender":{
+        "bg": "#E6E6FA", 
+        "fg": "#4B0082", 
+        "entry_bg": "#F5F5F5", 
+        "button_bg": "#9370DB", 
+        "button_fg": "#FFFFFF"},
+    "Mint":{
+        "bg": "#F5FFFA", 
+        "fg": "#006400", 
+        "entry_bg": "#E4F8F7", 
+        "button_bg": "#98FF98", 
+        "button_fg": "#006400"},
+    "Ocean":{
+        "bg": "#E0FFFF", 
+        "fg": "#2F4F4F", 
+        "entry_bg": "#AFEEEE", 
+        "button_bg": "#00CED1", 
+        "button_fg": "#FFFFFF"},
+    "Peach":{
+        "bg": "#FFE5B4", 
+        "fg": "#D2691E", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FFB347", 
+        "button_fg": "#FFFFFF"},
+    "Slate":{
+        "bg": "#708090", 
+        "fg": "#FFFFFF", 
+        "entry_bg": "#C0C0C0", 
+        "button_bg": "#778899", 
+        "button_fg": "#FFFFFF"},
+    "Sunset":{
+        "bg": "#FFCCBC", 
+        "fg": "#3B1C32", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FF7043", 
+        "button_fg": "#FFFFFF"}
+}
