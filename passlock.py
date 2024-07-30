@@ -4,12 +4,99 @@ import tkinter as tk
 import pyperclip
 import os
 import subprocess
-from tkinter import messagebox
+from tkinter import messagebox, Menu, font as tkfont
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
+# DEFAULT SETTINGS
 is_dark_mode = False
+def reset_to_default():
+    global current_font_size, current_opacity
+    current_font_size = 10
+    current_opacity = 1.0
+    change_font_size(current_font_size)
+    change_opacity(current_opacity)
+    change_window_size(500, 600)
+    if is_dark_mode:
+        toggle_dark_mode()
+
+# THEMES
+themes = {
+    "Default": {
+        "bg": "SystemButtonFace", 
+        "fg": "black", 
+        "entry_bg": "white", 
+        "button_bg": "SystemButtonFace", 
+        "button_fg": "black"},
+    "Arctic":{
+        "bg": "#E1E8ED", 
+        "fg": "#2E4057", 
+        "entry_bg": "#D4E6F1", 
+        "button_bg": "#A9C4E2", 
+        "button_fg": "#FFFFFF"},
+    "Bamboo":{
+        "bg": "#E3DAC9", 
+        "fg": "#4B5320", 
+        "entry_bg": "#D9EAD3", 
+        "button_bg": "#8F9779", 
+        "button_fg": "#3B3B3B"},
+    "Chocolate":{
+        "bg": "#D2B48C", 
+        "fg": "#3B1C14", 
+        "entry_bg": "#F4A460", 
+        "button_bg": "#8B4513", 
+        "button_fg": "#FFFFFF"},
+    "Forest":{
+        "bg": "#F0FFF0", 
+        "fg": "#229B22", 
+        "entry_bg": "#98FB98", 
+        "button_bg": "#2E9B57", 
+        "button_fg": "#FFFFFF"},
+    "Lavender":{
+        "bg": "#E6E6FA", 
+        "fg": "#4B0082", 
+        "entry_bg": "#F5F5F5", 
+        "button_bg": "#9370DB", 
+        "button_fg": "#FFFFFF"},
+    "Mint":{
+        "bg": "#F5FFFA", 
+        "fg": "#006400", 
+        "entry_bg": "#E4F8F7", 
+        "button_bg": "#98FF98", 
+        "button_fg": "#006400"},
+    "Ocean":{
+        "bg": "#E0FFFF", 
+        "fg": "#2F4F4F", 
+        "entry_bg": "#AFEEEE", 
+        "button_bg": "#00CED1", 
+        "button_fg": "#FFFFFF"},
+    "Peach":{
+        "bg": "#FFE5B4", 
+        "fg": "#D2691E", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FFB347", 
+        "button_fg": "#FFFFFF"},
+    "Slate":{
+        "bg": "#708090", 
+        "fg": "#FFFFFF", 
+        "entry_bg": "#C0C0C0", 
+        "button_bg": "#778899", 
+        "button_fg": "#FFFFFF"},
+    "Sunset":{
+        "bg": "#FFCCBC", 
+        "fg": "#3B1C32", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FF7043", 
+        "button_fg": "#FFFFFF"},
+
+    }
+
+current_theme = "Default"
+
+# EXIT APPLICATION
+def exit_app():
+    app.quit()
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -131,16 +218,25 @@ def copy_to_clipboard():
 def show_saved_passwords():
     file_path = "generated_passwords.txt"
     if os.path.exists(file_path):
-        if os.name == 'nt': # Windows
+        # Windows
+        if os.name == 'nt':
             os.startfile(file_path)
-        elif os.name == 'posix': # macOS / Linux
-            subprocess.call(('open', file_path))
+        # MacOS
+        elif platform.system() == 'Darwin':
+            subprocess.Popen(['open', file_path])
+        # Linux
+        elif os.name == 'posix':
+            subprocess.call(('xdg-open', file_path))
     else:
         messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
 
 # LIGHT / DARK MODE
 def toggle_dark_mode():
     global is_dark_mode
+    if current_theme != "Default":
+        messagebox.showinfo("Theme Conflict", "Dark mode is only available in the Default theme.")
+        return
+
     is_dark_mode = not is_dark_mode
 
     if is_dark_mode:
@@ -149,6 +245,7 @@ def toggle_dark_mode():
         entry_bg = "gray15"
         button_bg = "gray20"
         button_fg = "white"
+
     else:
         bg_color = "SystemButtonFace"
         fg_color = "black"
@@ -156,33 +253,60 @@ def toggle_dark_mode():
         button_bg = "SystemButtonFace"
         button_fg = "black"
 
+    app.config(bg=bg_color)
     main_frame.config(bg=bg_color)
+    
     for widget in main_frame.winfo_children():
-        widget_type = widget.winfo_class()
-        if widget_type == "Entry":
-            widget.config(bg=entry_bg, fg=fg_color, insertbackground=fg_color)
-        elif widget_type == "Checkbutton":
-            widget.config(bg=bg_color, fg=fg_color, activebackground=bg_color, 
-                          activeforeground=fg_color, selectcolor=bg_color)
-        elif widget_type == "Button":
-            widget.config(bg=button_bg, fg=button_fg, activebackground=button_bg, 
-                          activeforeground=button_fg)
-        elif widget_type == "Frame":
-            widget.config(bg=bg_color)
-        elif widget_type == "Label":
+        if isinstance(widget, tk.Label):
+            widget.config(bg=bg_color, fg=fg_color)
+        elif isinstance(widget, tk.Entry):
+            widget.config(bg=entry_bg, fg=fg_color)
+        elif isinstance(widget, tk.Button):
+            widget.config(bg=button_bg, fg=button_fg)
+        elif isinstance(widget, tk.Checkbutton):
             widget.config(bg=bg_color, fg=fg_color)
 
-    separator.config(bg=fg_color)
-
-    password_output.config(bg=entry_bg, fg=fg_color)
+    password_output.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
-    for button in [copy_button, show_passwords_button]:
-        button.config(bg=button_bg, fg=button_fg, activebackground=button_bg, activeforeground=button_fg)
+    menubar.config(bg=bg_color, fg=fg_color)
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+        menu.config(bg=bg_color, fg=fg_color)
 
-    app.config(bg=bg_color)
+def change_theme(theme_name):
+    global current_theme, is_dark_mode
+    if theme_name not in themes:
+        return
+    
+    is_dark_mode = False
 
-    update_password_labels()
+    current_theme = theme_name
+    theme = themes[theme_name]
+
+    app.config(bg=theme["bg"])
+    main_frame.config(bg=theme["bg"])
+
+    for widget in main_frame.winfo_children():
+        if isinstance(widget, tk.Label):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Entry):
+            widget.config(bg=theme["entry_bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Button):
+            widget.config(bg=theme["button_bg"], fg=theme["button_fg"])
+        elif isinstance(widget, tk.Checkbutton):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
+    
+    password_output.config(bg=theme["bg"], fg=theme["fg"])
+    strength_label.config(bg=theme["bg"], fg=theme["fg"])
+
+    menubar.config(bg=theme["bg"], fg=theme["fg"])
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+        menu.config(bg=theme["bg"], fg=theme["fg"])
+
+def reset_dark_mode_to_default():
+    global is_dark_mode
+    is_dark_mode = False
+    toggle_dark_mode()
 
 def update_password_labels():
     bg_color = "black" if is_dark_mode.get() else "SystemButtonFace"
@@ -193,11 +317,33 @@ def update_password_labels():
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
+# FONT SIZE
+def change_font_size(size):
+    global current_font_size
+    current_font_size = size
+    default_font = tkfont.nametofont("TkDefaultFont")
+    default_font.configure(size=current_font_size)
+    text_font = tkfont.nametofont("TkTextFont")
+    text_font.configure(size=current_font_size)
+    app.update()
+
+# WINDOW OPACITY
+def change_opacity(opacity):
+    global current_opacity
+    current_opacity = opacity
+    app.attributes('-alpha', current_opacity)
+
+# WINDOW RESIZER
+def change_window_size(width, height):
+    app.geometry(f"{width}x{height}")
+
+################################################################
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
-app.geometry("900x675")
-app.resizable(True, True)
+app.geometry("500x600")
+app.resizable(False, False)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 icon_path = os.path.join(script_dir, "icon.ico")
@@ -211,6 +357,79 @@ app.columnconfigure(1, weight=1)
 app.rowconfigure(7, weight=1)
 app.rowconfigure(8, weight=1)
 app.rowconfigure(9, weight=1)
+
+################################################################
+
+## MENU BAR
+
+menubar = Menu(app)
+app.config(menu=menubar)
+
+# FILE
+
+file_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Exit", command=exit_app)
+
+# PASSWORD
+
+password_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Password", menu=password_menu)
+password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
+password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
+
+# APPEARANCE
+
+appearance_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Appearance", menu=appearance_menu)
+
+appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+appearance_menu.add_separator()
+
+font_size_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
+font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
+font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
+font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
+
+window_size_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Window Size", menu=window_size_menu)
+window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
+window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
+window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
+
+opacity_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
+opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.50))
+opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
+opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
+opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
+opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
+opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
+
+appearance_menu.add_separator()
+appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
+
+# THEME
+
+theme_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Themes", menu=theme_menu)
+theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_separator()
+theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
+theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
+theme_menu.add_command(label="Chocolate", command=lambda: change_theme("Chocolate"))
+theme_menu.add_command(label="Forest", command=lambda: change_theme("Forest"))
+theme_menu.add_command(label="Lavender", command=lambda: change_theme("Lavender"))
+theme_menu.add_command(label="Mint", command=lambda: change_theme("Mint"))
+theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
+theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
+theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
+theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+
+################################################################
+
+# MAIN FRAME
 
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
@@ -272,8 +491,5 @@ copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
 show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
-
-dark_mode_button = tk.Button(main_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
-dark_mode_button.grid(row=14, columnspan=2, pady=10, sticky=tk.EW)
 
 app.mainloop()
