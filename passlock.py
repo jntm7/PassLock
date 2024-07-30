@@ -242,6 +242,10 @@ def open_opacity_slider():
     ok_button = tk.Button(opacity_window, text="OK", command=opacity_window.destroy)
     ok_button.pack(pady=10)
 
+# WINDOW RESIZER
+def change_window_size(width, height):
+    app.geometry(f"{width}x{height}")
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
@@ -287,9 +291,14 @@ menubar.add_cascade(label="Appearance", menu=appearance_menu)
 font_size_menu = Menu(appearance_menu, tearoff=0)
 appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
 font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
-font_size_menu.add_command(label="Default", command=lambda: change_font_size(10))
-font_size_menu.add_command(label="Medium", command=lambda: change_font_size(12))
+font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
 font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
+
+window_size_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Window Size", menu=window_size_menu)
+window_size_menu.add_command(label="Small", command=lambda: change_window_size(720, 540))
+window_size_menu.add_command(label="Medium", command=lambda: change_window_size(900, 675))
+window_size_menu.add_command(label="Large", command=lambda: change_window_size(1080, 810))
 
 appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 
