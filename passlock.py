@@ -270,7 +270,7 @@ def toggle_dark_mode():
     strength_label.config(bg=bg_color, fg=fg_color)
 
     menubar.config(bg=bg_color, fg=fg_color)
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
         menu.config(bg=bg_color, fg=fg_color)
 
 def change_theme(theme_name):
@@ -300,7 +300,7 @@ def change_theme(theme_name):
     strength_label.config(bg=theme["bg"], fg=theme["fg"])
 
     menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
         menu.config(bg=theme["bg"], fg=theme["fg"])
 
 def reset_dark_mode_to_default():
@@ -378,28 +378,28 @@ menubar.add_cascade(label="Password", menu=password_menu)
 password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
 password_menu.add_command(label="Show Saved Passwords", command=show_saved_passwords)
 
-# APPEARANCE
+# OPTIONS
 
-appearance_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Appearance", menu=appearance_menu)
+options_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Appearance", menu=options_menu)
 
-appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
-appearance_menu.add_separator()
+options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+options_menu.add_separator()
 
-font_size_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
+font_size_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Font Size", menu=font_size_menu)
 font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
 font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
 font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
 
-window_size_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Window Size", menu=window_size_menu)
+window_size_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Window Size", menu=window_size_menu)
 window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
 window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
 window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
 
-opacity_menu = Menu(appearance_menu, tearoff=0)
-appearance_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
+opacity_menu = Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
 opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.50))
 opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
 opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
@@ -407,8 +407,8 @@ opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
 opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
 opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
 
-appearance_menu.add_separator()
-appearance_menu.add_command(label="Reset to Default", command=reset_to_default)
+options_menu.add_separator()
+options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
 # THEME
 
@@ -426,6 +426,12 @@ theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
 theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
 theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
 theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+
+# TOOLS
+
+tools_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Tools", menu=tools_menu)
+tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 
 ################################################################
 
