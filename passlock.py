@@ -28,7 +28,7 @@ with open("themes.json", "r") as file:
 # DEFAULT THEME
 current_theme = "Default"
 
-# RESET FIELDS
+# RESET ENTRY FIELDS
 def reset_form():
 
     length_entry.delete(0, tk.END)
@@ -328,9 +328,7 @@ def open_password_checker():
         canvas.delete("all")
         canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
 
-    check_button = tk.Button(checker_window, text="Check Strength", 
-                             command=check_strength,
-                             bg=theme["button_bg"], fg=theme["button_fg"])
+    check_button = tk.Button(checker_window, text="Check Strength", command=check_strength, bg=theme["button_bg"], fg=theme["button_fg"])
     check_button.pack(pady=10)
 
     def update_checker_theme(new_theme):
