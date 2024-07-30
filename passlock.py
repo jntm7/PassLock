@@ -215,7 +215,6 @@ def toggle_dark_mode():
         entry_bg = "gray15"
         button_bg = "gray20"
         button_fg = "white"
-
     else:
         bg_color = "SystemButtonFace"
         fg_color = "black"
@@ -245,7 +244,7 @@ def toggle_dark_mode():
 
     for window in app.winfo_children():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
-            window.update_theme("Default")
+            window.update_theme()
 
 def change_theme(theme_name):
     global current_theme, is_dark_mode
@@ -325,18 +324,51 @@ def open_password_checker():
     checker_window.geometry("300x250")
     checker_window.resizable(False, False)
 
-    theme = themes[current_theme]
-    checker_window.config(bg=theme["bg"])
+    try:
+        checker_window.iconbitmap(icon_path)
+    except tk.TclError:
+        print(f"Warning: Could not load icon from {icon_path}")
 
-    tk.Label(checker_window, text="Enter a password to check:", bg=theme["bg"], fg=theme["fg"]).pack(pady=10)
+    tk.Label(checker_window, text="Enter a password to check:").pack(pady=10)
     password_entry = tk.Entry(checker_window, show="*", width=30)
     password_entry.pack(pady=5)
 
-    result_label = tk.Label(checker_window, text="", bg=theme["bg"], fg=theme["fg"])
+    result_label = tk.Label(checker_window, text="")
     result_label.pack(pady=10)
 
-    canvas = tk.Canvas(checker_window, width=200, height=20, bg=theme["bg"], highlightthickness=0)
+    canvas = tk.Canvas(checker_window, width=200, height=20, highlightthickness=0)
     canvas.pack(pady=10)
+
+    def update_checker_theme(new_theme=None):
+        if new_theme:
+            theme = themes[new_theme]
+        else:
+            theme = themes["Default"]
+        
+        if is_dark_mode:
+            bg_color = "black"
+            fg_color = "white"
+            entry_bg = "gray15"
+            button_bg = "gray20"
+            button_fg = "white"
+        else:
+            bg_color = theme["bg"]
+            fg_color = theme["fg"]
+            entry_bg = theme["entry_bg"]
+            button_bg = theme["button_bg"]
+            button_fg = theme["button_fg"]
+
+        checker_window.config(bg=bg_color)
+        for widget in checker_window.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.config(bg=bg_color, fg=fg_color)
+            elif isinstance(widget, tk.Entry):
+                widget.config(bg=entry_bg, fg=fg_color)
+            elif isinstance(widget, tk.Button):
+                widget.config(bg=button_bg, fg=button_fg)
+        canvas.config(bg=bg_color)
+
+    update_checker_theme()
 
     def check_strength():
         password = password_entry.get()
@@ -349,18 +381,8 @@ def open_password_checker():
         canvas.delete("all")
         canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
 
-    check_button = tk.Button(checker_window, text="Check Strength", command=check_strength, bg=theme["button_bg"], fg=theme["button_fg"])
-    check_button.pack(pady=10)
-
-    def update_checker_theme(new_theme):
-        theme = themes[new_theme]
-        checker_window.config(bg=theme["bg"])
-        for widget in checker_window.winfo_children():
-            if isinstance(widget, tk.Label):
-                widget.config(bg=theme["bg"], fg=theme["fg"])
-            elif isinstance(widget, tk.Button):
-                widget.config(bg=theme["button_bg"], fg=theme["button_fg"])
-        canvas.config(bg=theme["bg"])
+    check_button = tk.Button(checker_window, text="Check Strength", command=check_strength)
+    check_button.pack(pady=20)
 
     checker_window.update_theme = update_checker_theme
 
