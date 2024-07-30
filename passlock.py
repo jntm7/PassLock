@@ -10,6 +10,7 @@ from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
 # DEFAULT SETTINGS
+is_dark_mode = False
 
 def reset_to_default():
     global current_font_size, current_opacity
@@ -20,11 +21,67 @@ def reset_to_default():
     change_window_size(900, 675)
     if is_dark_mode:
         toggle_dark_mode()
+
+# THEMES
+
+themes = {
+    "Default": {
+        "bg": "SystemButtonFace", 
+        "fg": "black", 
+        "entry_bg": "white", 
+        "button_bg": "SystemButtonFace", 
+        "button_fg": "black"},
+    "Bamboo":{
+        "bg": "#E3DAC9", 
+        "fg": "#4B5320", 
+        "entry_bg": "#D9EAD3", 
+        "button_bg": "#8F9779", 
+        "button_fg": "#3B3B3B"},
+    "Arctic":{
+        "bg": "#E1E8ED", 
+        "fg": "#2E4057", 
+        "entry_bg": "#D4E6F1", 
+        "button_bg": "#A9C4E2", 
+        "button_fg": "#FFFFFF"},
+    "Sunset":{
+        "bg": "#FFCCBC", 
+        "fg": "#3B1C32", 
+        "entry_bg": "#FFDAB9", 
+        "button_bg": "#FF7043", 
+        "button_fg": "#FFFFFF"},
+    }
+
+current_theme = "Default"
+
+def change_theme(theme_name):
+    global current_theme
+    if theme_name not in themes:
+        return
     
+    current_theme = theme_name
+    theme = themes[theme_name]
+
+    app.config(bg=theme["bg"])
+    main_frame.config(bg=theme["bg"])
+
+    for widget in main_frame.winfo_children():
+        if isinstance(widget, tk.Label):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Entry):
+            widget.config(bg="white", fg=theme["fg"])
+        elif isinstance(widget, tk.Button):
+            widget.config(bg=theme["button"], fg=theme["fg"])
+    
+    password_output.config(bg=theme["bg"], fg=theme["fg"])
+
+    menubar.config(bg=theme["bg"], fg=theme["fg"])
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+        menu.config(bg=theme["bg"], fg=theme["fg"])
+
+
 # EXIT APPLICATION
 def exit_app():
     app.quit()
-    app.destroy()
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -222,6 +279,7 @@ def update_password_labels():
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
 
+
 # FONT SIZE
 def change_font_size(size):
     global current_font_size
@@ -288,7 +346,16 @@ password_menu.add_command(label="Show Saved Passwords", command=show_saved_passw
 appearance_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Appearance", menu=appearance_menu)
 
+
+theme_menu = Menu(appearance_menu, tearoff=0)
+appearance_menu.add_cascade(label="Themes", menu=theme_menu)
+theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
+theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
+theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+
 appearance_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+appearance_menu.add_separator()
 
 font_size_menu = Menu(appearance_menu, tearoff=0)
 appearance_menu.add_cascade(label="Font Size", menu=font_size_menu)
