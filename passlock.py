@@ -53,32 +53,6 @@ themes = {
 
 current_theme = "Default"
 
-def change_theme(theme_name):
-    global current_theme
-    if theme_name not in themes:
-        return
-    
-    current_theme = theme_name
-    theme = themes[theme_name]
-
-    app.config(bg=theme["bg"])
-    main_frame.config(bg=theme["bg"])
-
-    for widget in main_frame.winfo_children():
-        if isinstance(widget, tk.Label):
-            widget.config(bg=theme["bg"], fg=theme["fg"])
-        elif isinstance(widget, tk.Entry):
-            widget.config(bg="white", fg=theme["fg"])
-        elif isinstance(widget, tk.Button):
-            widget.config(bg=theme["button_bg"], fg=theme["fg"])
-        elif isinstance(widget, tk.Checkbutton):
-            widget.config(bg=theme["bg"], fg=theme["fg"])
-    
-    password_output.config(bg=theme["bg"], fg=theme["fg"])
-
-    menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
-        menu.config(bg=theme["bg"], fg=theme["fg"])
 
 
 # EXIT APPLICATION
@@ -270,7 +244,52 @@ def toggle_dark_mode():
 
     app.config(bg=bg_color)
 
+    update_dark_mode_widgets()
     update_password_labels()
+
+def change_theme(theme_name):
+    global current_theme
+    if theme_name not in themes:
+        return
+    
+    reset_dark_mode_to_default()
+
+    current_theme = theme_name
+    theme = themes[theme_name]
+
+    app.config(bg=theme["bg"])
+    main_frame.config(bg=theme["bg"])
+
+    for widget in main_frame.winfo_children():
+        if isinstance(widget, tk.Label):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Entry):
+            widget.config(bg="white", fg=theme["fg"])
+        elif isinstance(widget, tk.Button):
+            widget.config(bg=theme["button_bg"], fg=theme["fg"])
+        elif isinstance(widget, tk.Checkbutton):
+            widget.config(bg=theme["bg"], fg=theme["fg"])
+    
+    password_output.config(bg=theme["bg"], fg=theme["fg"])
+
+    menubar.config(bg=theme["bg"], fg=theme["fg"])
+    for menu in (file_menu, password_menu, appearance_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu):
+        menu.config(bg=theme["bg"], fg=theme["fg"])
+
+def update_dark_mode_widgets():
+    bg_color = "black" if is_dark_mode else "SystemButtonFace"
+    fg_color = "white" if is_dark_mode else "black"
+    
+    password_label.config(bg=bg_color, fg=fg_color)
+    password_output.config(bg=bg_color, fg=fg_color)
+    strength_label_text.config(bg=bg_color, fg=fg_color)
+    strength_label.config(bg=bg_color, fg=fg_color)
+
+def reset_dark_mode_to_default():
+    global is_dark_mode
+    is_dark_mode = False
+    toggle_dark_mode()
+
 
 def update_password_labels():
     bg_color = "black" if is_dark_mode.get() else "SystemButtonFace"
