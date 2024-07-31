@@ -334,7 +334,7 @@ def change_window_size(width, height):
 def open_password_checker():
     checker_window = tk.Toplevel(app)
     checker_window.title("Password Strength Checker")
-    checker_window.geometry("300x250")
+    checker_window.geometry("350x250")
     checker_window.resizable(False, False)
 
     try:
@@ -345,6 +345,17 @@ def open_password_checker():
     tk.Label(checker_window, text="Enter a password to check:").pack(pady=10)
     password_entry = tk.Entry(checker_window, show="*", width=30)
     password_entry.pack(pady=5)
+
+    def toggle_password_visibility():
+        if password_entry.cget("show") == "*":
+            password_entry.config(show="")
+            toggle_button.config(text="Hide")
+        else:
+            password_entry.config(show="*")
+            toggle_button.config(text="Show")
+
+    toggle_button = tk.Button(checker_window, text="Show", command=toggle_password_visibility)
+    toggle_button.pack(pady=5)
 
     result_label = tk.Label(checker_window, text="")
     result_label.pack(pady=10)
