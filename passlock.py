@@ -342,9 +342,13 @@ def open_password_checker():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    tk.Label(checker_window, text="Enter a password to check:").pack(pady=10)
-    password_entry = tk.Entry(checker_window, show="*", width=30)
-    password_entry.pack(pady=5)
+    tk.Label(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, pady=10, sticky="nsew")
+
+    entry_frame = tk.Frame(checker_window)
+    entry_frame.grid(row=1, column=0, columnspan=2, pady=5, sticky="nsew")
+
+    password_entry = tk.Entry(entry_frame, show="*", width=30)
+    password_entry.pack(side=tk.LEFT, padx=(0, 5))
 
     def toggle_password_visibility():
         if password_entry.cget("show") == "*":
@@ -354,14 +358,14 @@ def open_password_checker():
             password_entry.config(show="*")
             toggle_button.config(text="Show")
 
-    toggle_button = tk.Button(checker_window, text="Show", command=toggle_password_visibility)
-    toggle_button.pack(pady=5)
+    toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
+    toggle_button.pack(side=tk.LEFT)
 
     result_label = tk.Label(checker_window, text="")
-    result_label.pack(pady=10)
+    result_label.grid(row=2, column=0, columnspan=2, pady=10, sticky="nsew")
 
     canvas = tk.Canvas(checker_window, width=200, height=20, highlightthickness=0)
-    canvas.pack(pady=10)
+    canvas.grid(row=3, column=0, columnspan=2, pady=10, sticky="nsew")
 
     def update_checker_theme(new_theme=None):
         if new_theme:
@@ -406,7 +410,7 @@ def open_password_checker():
         canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
 
     check_button = tk.Button(checker_window, text="Check Strength", command=check_strength)
-    check_button.pack(pady=20)
+    check_button.grid(row=4, column=0, columnspan=2, pady=20, sticky="nsew")
 
     checker_window.update_theme = update_checker_theme
 
