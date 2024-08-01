@@ -429,33 +429,40 @@ def open_batch_password_generator():
 
     tk.Label(batch_generator_window, text="Number of passwords to generate:").grid(row=0, column=0, pady=10, sticky="w")
     count_entry = tk.Entry(batch_generator_window, width=10)
-    count_entry.grid(row=0, column=1, pady=10, sticky="w")
+    count_entry.grid(row=0, column=1, pady=10, sticky="ew")
 
     tk.Label(batch_generator_window, text="Password length:").grid(row=1, column=0, pady=10, sticky="w")
     length_entry = tk.Entry(batch_generator_window, width=10)
-    length_entry.grid(row=1, column=1, pady=10, sticky="w")
+    length_entry.grid(row=1, column=1, pady=10, sticky="ew")
 
     tk.Label(batch_generator_window, text="Number of uppercase letters:").grid(row=2, column=0, pady=10, sticky="w")
     uppercase_entry = tk.Entry(batch_generator_window, width=10)
-    uppercase_entry.grid(row=2, column=1, pady=10, sticky="w")
+    uppercase_entry.grid(row=2, column=1, pady=10, sticky="ew")
 
     tk.Label(batch_generator_window, text="Number of lowercase letters:").grid(row=3, column=0, pady=10, sticky="w")
     lowercase_entry = tk.Entry(batch_generator_window, width=10)
-    lowercase_entry.grid(row=3, column=1, pady=10, sticky="w")
+    lowercase_entry.grid(row=3, column=1, pady=10, sticky="ew")
 
     tk.Label(batch_generator_window, text="Number of digits:").grid(row=4, column=0, pady=10, sticky="w")
     digits_entry = tk.Entry(batch_generator_window, width=10)
-    digits_entry.grid(row=4, column=1, pady=10, sticky="w")
+    digits_entry.grid(row=4, column=1, pady=10, sticky="ew")
 
     tk.Label(batch_generator_window, text="Number of special characters:").grid(row=5, column=0, pady=10, sticky="w")
     special_entry = tk.Entry(batch_generator_window, width=10)
-    special_entry.grid(row=5, column=1, pady=10, sticky="w")
+    special_entry.grid(row=5, column=1, pady=10, sticky="ew")
 
     exclude_similar_var = tk.BooleanVar()
     exclude_similar_check = tk.Checkbutton(batch_generator_window, text="Exclude similar characters", variable=exclude_similar_var)
-    exclude_similar_check.grid(row=6, column=0, columnspan=2, pady=10, sticky="w")
+    exclude_similar_check.grid(row=6, column=0, columnspan=2, pady=10, sticky="ew")
 
-    def generate_and_save_passwords():
+    def batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
+        passwords = []
+        for _ in range(count):
+            password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+            passwords.append(password)
+        return passwords
+
+    def on_generate_passwords():
         try:
             count = int(count_entry.get())
             length = int(length_entry.get())
@@ -473,7 +480,7 @@ def open_batch_password_generator():
 
             exclude_similar = exclude_similar_var.get()
 
-            passwords = generate_and_save_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+            passwords = batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
             
             with open("generated_passwords.txt", "a") as file:
                 for password in passwords:
@@ -482,9 +489,6 @@ def open_batch_password_generator():
 
         except ValueError as e:
             messagebox.showerror("Input Error", str(e))
-
-    batch_generate_button = tk.Button(batch_generator_window, text="Generate and Save", command=generate_and_save_passwords)
-    batch_generate_button.grid(row=7, column=0, columnspan=2, pady=20)
 
     def update_batch_generator_theme(new_theme=None):
         if new_theme:
@@ -515,6 +519,9 @@ def open_batch_password_generator():
                 widget.config(bg=button_bg, fg=button_fg)
 
     update_batch_generator_theme(current_theme)
+
+    batch_generate_button = tk.Button(batch_generator_window, text="Generate and Save", command=batch_generate_passwords)
+    batch_generate_button.grid(row=7, column=0, columnspan=2, pady=20)
 
 ################################################################
 
