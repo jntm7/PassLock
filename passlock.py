@@ -416,6 +416,48 @@ def open_password_checker():
 
 # BATCH GENERATOR
 
+def open_batch_password_generator():
+    batch_generator_window = tk.Toplevel(app)
+    batch_generator_window.title("Batch Password Generator")
+    batch_generator_window.geometry("400x300")
+    batch_generator_window.resizable(False, False)
+
+    try:
+        batch_generator_window.iconbitmap(icon_path)
+    except tk.TclError:
+        print(f"Warning: Could not load icon from {icon_path}")
+
+    tk.Label(batch_generator_window, text="Number of passwords to generate:").grid(row=0, column=0, pady=10, sticky="w")
+    count_entry = tk.Entry(batch_generator_window, width=10)
+    count_entry.grid(row=0, column=1, pady=10, sticky="w")
+
+    tk.Label(batch_generator_window, text="Password length:").grid(row=1, column=0, pady=10, sticky="w")
+    length_entry = tk.Entry(batch_generator_window, width=10)
+    length_entry.grid(row=1, column=1, pady=10, sticky="w")
+
+    tk.Label(batch_generator_window, text="Number of uppercase letters:").grid(row=2, column=0, pady=10, sticky="w")
+    uppercase_entry = tk.Entry(batch_generator_window, width=10)
+    uppercase_entry.grid(row=2, column=1, pady=10, sticky="w")
+
+    tk.Label(batch_generator_window, text="Number of lowercase letters:").grid(row=3, column=0, pady=10, sticky="w")
+    lowercase_entry = tk.Entry(batch_generator_window, width=10)
+    lowercase_entry.grid(row=3, column=1, pady=10, sticky="w")
+
+    tk.Label(batch_generator_window, text="Number of digits:").grid(row=4, column=0, pady=10, sticky="w")
+    digits_entry = tk.Entry(batch_generator_window, width=10)
+    digits_entry.grid(row=4, column=1, pady=10, sticky="w")
+
+    tk.Label(batch_generator_window, text="Number of special characters:").grid(row=5, column=0, pady=10, sticky="w")
+    special_entry = tk.Entry(batch_generator_window, width=10)
+    special_entry.grid(row=5, column=1, pady=10, sticky="w")
+
+    exclude_similar_var = tk.BooleanVar()
+    exclude_similar_check = tk.Checkbutton(batch_generator_window, text="Exclude similar characters", variable=exclude_similar_var)
+    exclude_similar_check.grid(row=6, column=0, columnspan=2, pady=10, sticky="w")
+    
+
+
+
 def generate_multiple_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
     passwords = []
     for _ in range(count):
@@ -524,6 +566,9 @@ password_menu.add_command(label="Open Passwords", command=show_saved_passwords)
 tools_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
+tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
+
+
 
 ################################################################
 
