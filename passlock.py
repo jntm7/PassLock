@@ -3,10 +3,30 @@ import string
 import tkinter as tk
 import pyperclip
 import os
+import sys
 import subprocess
 import json
 from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
+
+# BASE PATH
+if hasattr(sys, '_MEIPASS'):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+# ICON PATH
+icon_path = os.path.join(base_path, "icon.ico")
+
+# THEME PATH
+themes_path = os.path.join(base_path, "themes.json")
+
+# LOAD THEMES
+with open(themes_path, "r") as file:
+    themes = json.load(file)
+
+# DEFAULT THEME
+current_theme = "Default"
 
 # DEFAULT SETTINGS
 windll.shcore.SetProcessDpiAwareness(1)
@@ -20,13 +40,6 @@ def reset_to_default():
     change_window_size(500, 600)
     if is_dark_mode:
         toggle_dark_mode()
-
-# LOAD THEMES
-with open("themes.json", "r") as file:
-    themes = json.load(file)
-
-# DEFAULT THEME
-current_theme = "Default"
 
 # RESET ENTRY FIELDS
 def reset_form():
@@ -246,7 +259,7 @@ def toggle_dark_mode():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
             window.update_theme()
 
-def change_theme(theme_name):
+def update_theme(theme_name):
     global current_theme, is_dark_mode
     if theme_name not in themes:
         return
@@ -321,7 +334,7 @@ def change_window_size(width, height):
 def open_password_checker():
     checker_window = tk.Toplevel(app)
     checker_window.title("Password Strength Checker")
-    checker_window.geometry("300x250")
+    checker_window.geometry("350x250")
     checker_window.resizable(False, False)
 
     try:
@@ -329,21 +342,36 @@ def open_password_checker():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    tk.Label(checker_window, text="Enter a password to check:").pack(pady=10)
-    password_entry = tk.Entry(checker_window, show="*", width=30)
-    password_entry.pack(pady=5)
+    tk.Label(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, pady=10, sticky="nsew")
+
+    entry_frame = tk.Frame(checker_window)
+    entry_frame.grid(row=1, column=0, columnspan=2, pady=5, sticky="nsew")
+
+    password_entry = tk.Entry(entry_frame, show="*", width=30)
+    password_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+    def toggle_password_visibility():
+        if password_entry.cget("show") == "*":
+            password_entry.config(show="")
+            toggle_button.config(text="Hide")
+        else:
+            password_entry.config(show="*")
+            toggle_button.config(text="Show")
+
+    toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
+    toggle_button.pack(side=tk.LEFT)
 
     result_label = tk.Label(checker_window, text="")
-    result_label.pack(pady=10)
+    result_label.grid(row=2, column=0, columnspan=2, pady=10, sticky="nsew")
 
     canvas = tk.Canvas(checker_window, width=200, height=20, highlightthickness=0)
-    canvas.pack(pady=10)
+    canvas.grid(row=3, column=0, columnspan=2, pady=10, sticky="nsew")
 
     def update_checker_theme(new_theme=None):
         if new_theme:
             theme = themes[new_theme]
         else:
-            theme = themes["Default"]
+            theme = themes[current_theme]
         
         if is_dark_mode:
             bg_color = "black"
@@ -368,7 +396,7 @@ def open_password_checker():
                 widget.config(bg=button_bg, fg=button_fg)
         canvas.config(bg=bg_color)
 
-    update_checker_theme()
+    update_checker_theme(current_theme)
 
     def check_strength():
         password = password_entry.get()
@@ -382,7 +410,7 @@ def open_password_checker():
         canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
 
     check_button = tk.Button(checker_window, text="Check Strength", command=check_strength)
-    check_button.pack(pady=20)
+    check_button.grid(row=4, column=0, columnspan=2, pady=20, sticky="nsew")
 
     checker_window.update_theme = update_checker_theme
 
@@ -459,18 +487,18 @@ options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
 theme_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Themes", menu=theme_menu)
-theme_menu.add_command(label="Arctic", command=lambda: change_theme("Arctic"))
-theme_menu.add_command(label="Bamboo", command=lambda: change_theme("Bamboo"))
-theme_menu.add_command(label="Chocolate", command=lambda: change_theme("Chocolate"))
-theme_menu.add_command(label="Forest", command=lambda: change_theme("Forest"))
-theme_menu.add_command(label="Lavender", command=lambda: change_theme("Lavender"))
-theme_menu.add_command(label="Mint", command=lambda: change_theme("Mint"))
-theme_menu.add_command(label="Ocean", command=lambda: change_theme("Ocean"))
-theme_menu.add_command(label="Peach", command=lambda: change_theme("Peach"))
-theme_menu.add_command(label="Slate", command=lambda: change_theme("Slate"))
-theme_menu.add_command(label="Sunset", command=lambda: change_theme("Sunset"))
+theme_menu.add_command(label="Arctic", command=lambda: update_theme("Arctic"))
+theme_menu.add_command(label="Bamboo", command=lambda: update_theme("Bamboo"))
+theme_menu.add_command(label="Chocolate", command=lambda: update_theme("Chocolate"))
+theme_menu.add_command(label="Forest", command=lambda: update_theme("Forest"))
+theme_menu.add_command(label="Lavender", command=lambda: update_theme("Lavender"))
+theme_menu.add_command(label="Mint", command=lambda: update_theme("Mint"))
+theme_menu.add_command(label="Ocean", command=lambda: update_theme("Ocean"))
+theme_menu.add_command(label="Peach", command=lambda: update_theme("Peach"))
+theme_menu.add_command(label="Slate", command=lambda: update_theme("Slate"))
+theme_menu.add_command(label="Sunset", command=lambda: update_theme("Sunset"))
 theme_menu.add_separator()
-theme_menu.add_command(label="Default", command=lambda: change_theme("Default"))
+theme_menu.add_command(label="Default", command=lambda: update_theme("Default"))
 theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
 
 # PASSWORD
