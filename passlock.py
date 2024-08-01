@@ -414,6 +414,17 @@ def open_password_checker():
 
     checker_window.update_theme = update_checker_theme
 
+# BATCH GENERATOR
+
+def generate_multiple_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
+    passwords = []
+    for _ in range(count):
+        password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+        passwords.append(password)
+    return passwords
+
+################################################################
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
