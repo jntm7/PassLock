@@ -334,7 +334,7 @@ def change_window_size(width, height):
 def open_password_checker():
     checker_window = tk.Toplevel(app)
     checker_window.title("Password Strength Checker")
-    checker_window.geometry("350x250")
+    checker_window.geometry("525x375")
     checker_window.resizable(False, False)
 
     try:
@@ -419,7 +419,7 @@ def open_password_checker():
 def open_batch_password_generator():
     batch_generator_window = tk.Toplevel(app)
     batch_generator_window.title("Batch Password Generator")
-    batch_generator_window.geometry("400x300")
+    batch_generator_window.geometry("625x700")
     batch_generator_window.resizable(False, False)
 
     try:
@@ -454,23 +454,74 @@ def open_batch_password_generator():
     exclude_similar_var = tk.BooleanVar()
     exclude_similar_check = tk.Checkbutton(batch_generator_window, text="Exclude similar characters", variable=exclude_similar_var)
     exclude_similar_check.grid(row=6, column=0, columnspan=2, pady=10, sticky="w")
-    
 
+    def generate_and_save_passwords():
+        try:
+            count = int(count_entry.get())
+            length = int(length_entry.get())
+            num_uppercase = int(uppercase_entry.get())
+            num_lowercase = int(lowercase_entry.get())
+            num_digits = int(digits_entry.get())
+            num_special = int(special_entry.get())
 
+            if length <= 0 or count <= 0:
+                raise ValueError("Password length and count must be positive")
+            if num_uppercase < 0 or num_lowercase < 0 or num_digits < 0 or num_special < 0:
+                raise ValueError("Character counts cannot be negative")
+            if num_uppercase + num_lowercase + num_digits + num_special > length:
+                raise ValueError("Sum of character types exceeds password length")
 
-def generate_multiple_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
-    passwords = []
-    for _ in range(count):
-        password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
-        passwords.append(password)
-    return passwords
+            exclude_similar = exclude_similar_var.get()
+
+            passwords = generate_and_save_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+            
+            with open("generated_passwords.txt", "a") as file:
+                for password in passwords:
+                    file.write(password + "\n")
+            messagebox.showinfo("Success", f"{count} passwords saved to generated_passwords.txt")
+
+        except ValueError as e:
+            messagebox.showerror("Input Error", str(e))
+
+    batch_generate_button = tk.Button(batch_generator_window, text="Generate and Save", command=generate_and_save_passwords)
+    batch_generate_button.grid(row=7, column=0, columnspan=2, pady=20)
+
+    def update_batch_generator_theme(new_theme=None):
+        if new_theme:
+            theme = themes[new_theme]
+        else:
+            theme = themes[current_theme]
+        
+        if is_dark_mode:
+            bg_color = "black"
+            fg_color = "white"
+            entry_bg = "gray15"
+            button_bg = "gray20"
+            button_fg = "white"
+        else:
+            bg_color = theme["bg"]
+            fg_color = theme["fg"]
+            entry_bg = theme["entry_bg"]
+            button_bg = theme["button_bg"]
+            button_fg = theme["button_fg"]
+
+        batch_generator_window.config(bg=bg_color)
+        for widget in batch_generator_window.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.config(bg=bg_color, fg=fg_color)
+            elif isinstance(widget, tk.Entry):
+                widget.config(bg=entry_bg, fg=fg_color)
+            elif isinstance(widget, tk.Button):
+                widget.config(bg=button_bg, fg=button_fg)
+
+    update_batch_generator_theme(current_theme)
 
 ################################################################
 
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
-app.geometry("500x600")
+app.geometry("750x900")
 app.resizable(False, False)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
