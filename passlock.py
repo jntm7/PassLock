@@ -223,7 +223,7 @@ def save_password_as():
 
 
 def copy_to_clipboard():
-    password = password_output.cget("text")
+    password = password_var.get()
     if password:
         pyperclip.copy(password)
         messagebox.showinfo("Copied", "Password copied to clipboard!")
@@ -713,7 +713,7 @@ help_menu.add_command(label="Documentation", command=open_documentation)
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-for i in range(15):
+for i in range(16):
     main_frame.grid_rowconfigure(i, weight=1)
 main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_columnconfigure(1, weight=1)
@@ -745,19 +745,19 @@ exclude_similar_var = tk.BooleanVar()
 exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
 exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
-
 save_password_var = tk.BooleanVar()
 save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
-save_password_checkbutton.grid(row=8, columnspan=2, sticky=tk.W)
+save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
 
 generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
-generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
+generate_button.grid(row=8, column=0, columnspan=2, pady=10, sticky=tk.EW)
+
+separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+separator.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
 password_label = tk.Label(main_frame, text="Generated Password:")
 password_label.grid(row=10, column=0, sticky=tk.W)
-password_output = tk.Label(main_frame, text="****")
+password_output = tk.Label(main_frame, text="")
 password_output.grid(row=10, column=1, sticky=tk.E)
 
 strength_label_text = tk.Label(main_frame, text="Password Strength:")
@@ -765,14 +765,17 @@ strength_label_text.grid(row=11, column=0, sticky=tk.W)
 strength_label = tk.Label(main_frame, text="")
 strength_label.grid(row=11, column=1, sticky=tk.E)
 
+separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+separator.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
+
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
+copy_button.grid(row=13, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
-toggle_visibility_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
-show_passwords_button.grid(row=14, column=0, columnspan=2, pady=10, sticky=tk.EW)
+show_passwords_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 app.bind('<Control-g>', lambda event: generate_and_display_password())
 app.bind('<Control-c>', lambda event: copy_to_clipboard())
