@@ -69,12 +69,16 @@ def open_keyboard_shortcuts():
     Ctrl+G: Generate Password
     Ctrl+C: Copy Password
     Ctrl+S: Save Password
+    Ctrl+V: Toggle Password Visibility
+
     Ctrl+O: Open Saved Passwords
     Ctrl+B: Open Batch Generator
     Ctrl+H: Open Password Strength Checker
+
+    Ctrl+D: Toggle Dark Mode
     Ctrl+E: Exit Application
-    
-    F1: Show This Help
+
+    F1: Keyboard Shortcuts
     F2: Open Documentation
     """
 
@@ -330,6 +334,13 @@ def update_password_labels():
     password_output.config(bg=bg_color, fg=fg_color)
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
+
+# PASSWORD VISIBILITY
+def toggle_password_visibility():
+    if password_output.cget("show") == "*":
+        password_output.config(show="")
+    else:
+        password_output.config(show="*")
 
 # FONT SIZE
 def change_font_size(size):
@@ -639,6 +650,9 @@ presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), 
 presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
 options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
+options_menu.add_separator()
+options_menu.add_command(label="Toggle Password Visibility", command=toggle_password_visibility)
+
 # THEME
 
 theme_menu = Menu(menubar, tearoff=0)
@@ -742,8 +756,6 @@ copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
 show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
-app.mainloop()
-
 app.bind('<Control-g>', lambda event: generate_and_display_password())
 app.bind('<Control-c>', lambda event: copy_to_clipboard())
 app.bind('<Control-s>', lambda event: save_password())
@@ -751,5 +763,9 @@ app.bind('<Control-o>', lambda event: show_saved_passwords())
 app.bind('<Control-b>', lambda event: open_batch_password_generator())
 app.bind('<Control-h>', lambda event: open_password_checker())
 app.bind('<Control-e>', lambda event: exit_app())
+app.bind('<Control-v>', lambda event: toggle_password_visibility())
+app.bind('<Control-d>', lambda event: toggle_dark_mode())
 app.bind('<F1>', lambda event: open_keyboard_shortcuts())
 app.bind('<F2>', lambda event: open_documentation())
+
+app.mainloop()
