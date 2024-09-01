@@ -8,6 +8,7 @@ import subprocess
 import json
 from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
+from webbrowser import open_new_tab
 
 # BASE PATH
 if hasattr(sys, '_MEIPASS'):
@@ -26,7 +27,10 @@ with open(themes_path, "r") as file:
     themes = json.load(file)
 
 # DEFAULT THEME
-current_theme = "Default"
+current_theme_index = 0
+
+# THEME INDEX
+current_theme = list(themes.keys())[current_theme_index]
 
 # DEFAULT SETTINGS
 windll.shcore.SetProcessDpiAwareness(1)
@@ -59,6 +63,34 @@ def reset_form():
 # EXIT APPLICATION
 def exit_app():
     app.quit()
+
+# SHORTCUT HELP
+def open_keyboard_shortcuts():
+    shortcut_info = """
+    Keyboard Shortcuts:
+
+    Ctrl+G: Generate Password
+    Ctrl+C: Copy Password
+    Ctrl+S: Save Password
+    Ctrl+V: Toggle Password Visibility
+
+    Ctrl+O: Open Saved Passwords
+    Ctrl+B: Open Batch Generator
+    Ctrl+H: Open Password Strength Checker
+
+    Ctrl+D: Toggle Dark Mode
+    Ctrl+T: Change Theme
+    Ctrl+E: Exit Application
+
+    F1: Keyboard Shortcuts
+    F2: Open Documentation
+    """
+
+    messagebox.showinfo("Keyboard Shortcuts", shortcut_info)
+
+# DOCUMENTATION HELP
+def open_documentation():
+    open_new_tab("https://github.com/jntm7/PassLock")
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -158,7 +190,11 @@ def generate_and_display_password():
         password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
         strength = password_strength(password)
 
-        password_output.config(text=password)
+        password_var.set(password)
+        if password_visible:
+            password_output.config(text=password)
+        else:
+            password_output.config(text="*" * len(password))
         strength_label.config(text=strength)
 
         if save_password_var.get():
@@ -191,7 +227,7 @@ def save_password_as():
 
 
 def copy_to_clipboard():
-    password = password_output.cget("text")
+    password = password_var.get()
     if password:
         pyperclip.copy(password)
         messagebox.showinfo("Copied", "Password copied to clipboard!")
@@ -259,13 +295,12 @@ def toggle_dark_mode():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
             window.update_theme()
 
+# THEMES
 def update_theme(theme_name):
-    global current_theme, is_dark_mode
+    global current_theme
     if theme_name not in themes:
         return
     
-    is_dark_mode = False
-
     current_theme = theme_name
     theme = themes[theme_name]
 
@@ -286,12 +321,18 @@ def update_theme(theme_name):
     strength_label.config(bg=theme["bg"], fg=theme["fg"])
 
     menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu, help_menu):
         menu.config(bg=theme["bg"], fg=theme["fg"])
 
     for window in app.winfo_children():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
             window.update_theme(theme_name)
+
+def rotate_theme():
+    global current_theme_index
+    current_theme_index = (current_theme_index + 1) % len(themes)
+    new_theme = list(themes.keys())[current_theme_index]
+    update_theme(new_theme)
 
 def reset_dark_mode_to_default():
     global is_dark_mode
@@ -306,6 +347,16 @@ def update_password_labels():
     password_output.config(bg=bg_color, fg=fg_color)
     strength_label_text.config(bg=bg_color, fg=fg_color)
     strength_label.config(bg=bg_color, fg=fg_color)
+
+# PASSWORD VISIBILITY
+def toggle_password_visibility():
+    global password_visible
+    if password_visible:
+        password_output.config(text="*" * len(password_var.get()))
+        password_visible = False
+    else:
+        password_output.config(text=password_var.get())
+        password_visible = True
 
 # FONT SIZE
 def change_font_size(size):
@@ -351,12 +402,13 @@ def open_password_checker():
     password_entry.pack(side=tk.LEFT, padx=(0, 5))
 
     def toggle_password_visibility():
-        if password_entry.cget("show") == "*":
-            password_entry.config(show="")
-            toggle_button.config(text="Hide")
+        global password_visible
+        if password_visible:
+            password_output.config(text="*" * len(password_var.get()))
+            password_visible = False
         else:
-            password_entry.config(show="*")
-            toggle_button.config(text="Show")
+            password_output.config(text=password_var.get())
+            password_visible = True
 
     toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
     toggle_button.pack(side=tk.LEFT)
@@ -565,6 +617,13 @@ app.rowconfigure(7, weight=1)
 app.rowconfigure(8, weight=1)
 app.rowconfigure(9, weight=1)
 
+# HOLD PASSWORD AS STRING VARIABLE
+password_var = tk.StringVar()
+password_var.set("")
+
+# TRACK PASSWORD VISIBILITY
+password_visible = False
+
 ################################################################
 
 ## MENU BAR
@@ -615,6 +674,9 @@ presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), 
 presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
 options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
+options_menu.add_separator()
+options_menu.add_command(label="Toggle Password Visibility", command=toggle_password_visibility)
+
 # THEME
 
 theme_menu = Menu(menubar, tearoff=0)
@@ -647,7 +709,11 @@ menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
 
-
+# HELP
+help_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=help_menu)
+help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
+help_menu.add_command(label="Documentation", command=open_documentation)
 
 ################################################################
 
@@ -656,7 +722,7 @@ tools_menu.add_command(label="Batch Generator", command=open_batch_password_gene
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-for i in range(14):
+for i in range(16):
     main_frame.grid_rowconfigure(i, weight=1)
 main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_columnconfigure(1, weight=1)
@@ -688,12 +754,12 @@ exclude_similar_var = tk.BooleanVar()
 exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
 exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
-
 save_password_var = tk.BooleanVar()
 save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
-save_password_checkbutton.grid(row=8, columnspan=2, sticky=tk.W)
+save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
+
+separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
 generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
 generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
@@ -708,10 +774,29 @@ strength_label_text.grid(row=11, column=0, sticky=tk.W)
 strength_label = tk.Label(main_frame, text="")
 strength_label.grid(row=11, column=1, sticky=tk.E)
 
+separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+separator.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
+
+toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
+toggle_visibility_button.grid(row=13, column=0, columnspan=2, pady=5, sticky=tk.EW)
+
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
+copy_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
-show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+show_passwords_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
+
+app.bind('<Control-g>', lambda event: generate_and_display_password())
+app.bind('<Control-c>', lambda event: copy_to_clipboard())
+app.bind('<Control-s>', lambda event: save_password())
+app.bind('<Control-o>', lambda event: show_saved_passwords())
+app.bind('<Control-b>', lambda event: open_batch_password_generator())
+app.bind('<Control-h>', lambda event: open_password_checker())
+app.bind('<Control-e>', lambda event: exit_app())
+app.bind('<Control-v>', lambda event: toggle_password_visibility())
+app.bind('<Control-d>', lambda event: toggle_dark_mode())
+app.bind('<Control-t>', lambda event: rotate_theme())
+app.bind('<F1>', lambda event: open_keyboard_shortcuts())
+app.bind('<F2>', lambda event: open_documentation())
 
 app.mainloop()
