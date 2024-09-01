@@ -11,31 +11,49 @@ Generate passwords of desired length by specifying the number of:
   - lowercase letters: `a-z`
   - digits: `0-9`
   - special characters: ``!"#$%&'()*+, -./:;<=>?@[\]^_`{|}~``
+  - include/exclude similar characters: `O, 0, I, 1, l`
 
-And specifying whether to include/exclude similar characters: `O, 0, I, 1, l`
+### Password Strength Checker
 
-### Password Strength Indicator
-
+- Evaluate the strength of a provided password
 - Evaluates the strength of the generated password:
 `Weak - Moderate - Strong - Very Strong`
 
-### Save & View Passwords
+### Copy, Save & View Passwords
 
-- Option to save generated passwords to a file: `generated_passwords.txt`
-- Option to open `generated_passwords.txt` directly from the program.
+- Hide generated password by toggling password visibility
+- Copy generated password to clipboard
+- Save generated passwords to file: `generated_passwords.txt`
+- Open `generated_passwords.txt` directly from the program
 
 ### Window Customization
 
-- Option to toggle between light mode (default) and dark mode
-- Option to change font size: small, medium (default), large
-- Option to change window size: small, medium (default), large
-- Option to change window opacity: 25%, 50%, 65%, 75%, 85%, 100% (default)
-
-#### Themes
-
-- Option to select from 10 different themes: "Arctic", "Bamboo", "Chocolate", "Forest", "Lavender", "Mint", "Ocean", "Peach", "Slate", "Sunset".
+- Select from three preset window configurations
+- Change font size
+- Change window size
+- Change window opacity
+- Toggle between light mode (default) and dark mode
+- Select from 10 themes: "Arctic", "Bamboo", "Chocolate", "Forest", "Lavender", "Mint", "Ocean", "Peach", "Slate", "Sunset"
 
 ![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
+
+### Intuitive Interface
+
+- Supports keyboard shortcuts:
+    - Ctrl+G: Generate Password
+    - Ctrl+C: Copy Password
+    - Ctrl+S: Save Password
+    - Ctrl+V: Toggle Password Visibility
+    - Ctrl+O: Open Saved Passwords
+    - Ctrl+B: Open Batch Generator
+    - Ctrl+H: Open Password Strength Checker
+    - Ctrl+D: Toggle Dark Mode
+    - Ctrl+T: Change Theme
+    - Ctrl+E: Exit Application
+    - F1: View Keyboard Shortcuts
+    - F2: Open Documentation
+
+- Menu bar navigation makes all settings and tools easily accessible.
 
 ## ⚙️ Example Usage:
 
@@ -88,3 +106,5 @@ Simply open `passlock.exe` to launch the application.
 - Click `Generate Password`, to display the generated password and its password strength, based on the parameters chosen.
 - Click `Copy to Clipboard`, to copy the generated password, to be pasted somewhere of your convenience.
 - Click `Show Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
+
+To generate multiple passwords in one instance using the same criteria, go to `Tools > Batch Generator`.
