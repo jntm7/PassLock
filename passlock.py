@@ -62,7 +62,7 @@ def exit_app():
     app.quit()
 
 # SHORTCUT HELP
-def open_shortcut_help():
+def open_keyboard_shortcuts():
     shortcut_info = """
     Keyboard Shortcuts:
 
@@ -81,16 +81,8 @@ def open_shortcut_help():
     messagebox.showinfo("Keyboard Shortcuts", shortcut_info)
 
 # DOCUMENTATION HELP
-
 def open_documentation():
     open_new_tab("https://github.com/jntm7/PassLock")
-
-
-
-
-
-
-
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -679,7 +671,11 @@ menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
 
-
+# HELP
+help_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=help_menu)
+help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
+help_menu.add_command(label="Documentation", command=open_documentation)
 
 ################################################################
 
@@ -747,3 +743,13 @@ show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", comma
 show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 app.mainloop()
+
+app.bind('<Control-g>', lambda event: generate_and_display_password())
+app.bind('<Control-c>', lambda event: copy_to_clipboard())
+app.bind('<Control-s>', lambda event: save_password())
+app.bind('<Control-o>', lambda event: show_saved_passwords())
+app.bind('<Control-b>', lambda event: open_batch_password_generator())
+app.bind('<Control-h>', lambda event: open_password_checker())
+app.bind('<Control-e>', lambda event: exit_app())
+app.bind('<F1>', lambda event: open_keyboard_shortcuts())
+app.bind('<F2>', lambda event: open_documentation())
