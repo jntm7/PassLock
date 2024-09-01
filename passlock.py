@@ -321,7 +321,7 @@ def update_theme(theme_name):
     strength_label.config(bg=theme["bg"], fg=theme["fg"])
 
     menubar.config(bg=theme["bg"], fg=theme["fg"])
-    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu):
+    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu, help_menu):
         menu.config(bg=theme["bg"], fg=theme["fg"])
 
     for window in app.winfo_children():
@@ -404,7 +404,7 @@ def open_password_checker():
     def toggle_password_visibility():
         global password_visible
         if password_visible:
-            password_output.config(text="*" * len(password))
+            password_output.config(text="*" * len(password_var.get()))
             password_visible = False
         else:
             password_output.config(text=password_var.get())
@@ -758,11 +758,11 @@ save_password_var = tk.BooleanVar()
 save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
 save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
 
-generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
-generate_button.grid(row=8, column=0, columnspan=2, pady=10, sticky=tk.EW)
-
 separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
+separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
+
+generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
+generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 password_label = tk.Label(main_frame, text="Generated Password:")
 password_label.grid(row=10, column=0, sticky=tk.W)
@@ -775,13 +775,13 @@ strength_label = tk.Label(main_frame, text="")
 strength_label.grid(row=11, column=1, sticky=tk.E)
 
 separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
-
-copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=13, column=0, columnspan=2, pady=5, sticky=tk.EW)
+separator.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
 toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
-toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
+toggle_visibility_button.grid(row=13, column=0, columnspan=2, pady=5, sticky=tk.EW)
+
+copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
+copy_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
 show_passwords_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
