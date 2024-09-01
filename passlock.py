@@ -79,6 +79,7 @@ def open_keyboard_shortcuts():
     Ctrl+H: Open Password Strength Checker
 
     Ctrl+D: Toggle Dark Mode
+    Ctrl+T: Change Theme
     Ctrl+E: Exit Application
 
     F1: Keyboard Shortcuts
