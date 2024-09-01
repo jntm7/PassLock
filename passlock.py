@@ -27,7 +27,10 @@ with open(themes_path, "r") as file:
     themes = json.load(file)
 
 # DEFAULT THEME
-current_theme = "Default"
+current_theme_index = 0
+
+# THEME INDEX
+current_theme = list(themes.keys())[current_theme_index]
 
 # DEFAULT SETTINGS
 windll.shcore.SetProcessDpiAwareness(1)
@@ -291,13 +294,12 @@ def toggle_dark_mode():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
             window.update_theme()
 
+# THEMES
 def update_theme(theme_name):
-    global current_theme, is_dark_mode
+    global current_theme
     if theme_name not in themes:
         return
     
-    is_dark_mode = False
-
     current_theme = theme_name
     theme = themes[theme_name]
 
@@ -324,6 +326,12 @@ def update_theme(theme_name):
     for window in app.winfo_children():
         if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
             window.update_theme(theme_name)
+
+def rotate_theme():
+    global current_theme_index
+    current_theme_index = (current_theme_index + 1) % len(themes)
+    new_theme = list(themes.keys())[current_theme_index]
+    update_theme(new_theme)
 
 def reset_dark_mode_to_default():
     global is_dark_mode
@@ -786,6 +794,7 @@ app.bind('<Control-h>', lambda event: open_password_checker())
 app.bind('<Control-e>', lambda event: exit_app())
 app.bind('<Control-v>', lambda event: toggle_password_visibility())
 app.bind('<Control-d>', lambda event: toggle_dark_mode())
+app.bind('<Control-t>', lambda event: rotate_theme())
 app.bind('<F1>', lambda event: open_keyboard_shortcuts())
 app.bind('<F2>', lambda event: open_documentation())
 
