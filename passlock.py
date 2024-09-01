@@ -6,6 +6,7 @@ import os
 import sys
 import subprocess
 import json
+import platform
 from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
 from webbrowser import open_new_tab
