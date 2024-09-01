@@ -334,7 +334,7 @@ def change_window_size(width, height):
 def open_password_checker():
     checker_window = tk.Toplevel(app)
     checker_window.title("Password Strength Checker")
-    checker_window.geometry("350x250")
+    checker_window.geometry("525x375")
     checker_window.resizable(False, False)
 
     try:
@@ -414,10 +414,142 @@ def open_password_checker():
 
     checker_window.update_theme = update_checker_theme
 
+# BATCH GENERATOR
+
+def batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
+    passwords = []
+    for _ in range(count):
+        password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+        passwords.append(password)
+    return passwords
+
+def open_batch_password_generator():
+    batch_generator_window = tk.Toplevel(app)
+    batch_generator_window.title("Batch Password Generator")
+    batch_generator_window.geometry("400x500")
+    batch_generator_window.resizable(False, False)
+
+    try:
+        batch_generator_window.iconbitmap(icon_path)
+    except tk.TclError:
+        print(f"Warning: Could not load icon from {icon_path}")
+
+    main_frame = tk.Frame(batch_generator_window, padx=20, pady=20)
+    main_frame.pack(fill=tk.BOTH, expand=True)
+
+    for i in range(9):
+        main_frame.grid_rowconfigure(i, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(1, weight=1)
+
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
+
+    tk.Label(main_frame, text="Enter the number of passwords to generate:").grid(row=1, column=0, sticky=tk.W)
+    count_entry = tk.Entry(main_frame, width=10)
+    count_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the desired password length:").grid(row=2, column=0, sticky=tk.W)
+    length_entry = tk.Entry(main_frame, width=10)
+    length_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=3, column=0, sticky=tk.W)
+    uppercase_entry = tk.Entry(main_frame, width=10)
+    uppercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=4, column=0, sticky=tk.W)
+    lowercase_entry = tk.Entry(main_frame, width=10)
+    lowercase_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of digits:").grid(row=5, column=0, sticky=tk.W)
+    digits_entry = tk.Entry(main_frame, width=10)
+    digits_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of special characters:").grid(row=6, column=0, sticky=tk.W)
+    special_entry = tk.Entry(main_frame, width=10)
+    special_entry.grid(row=6, column=1, sticky=tk.E, padx=10, pady=5)
+
+    exclude_similar_var = tk.BooleanVar()
+    exclude_similar_check = tk.Checkbutton(main_frame, text="Exclude similar characters", variable=exclude_similar_var)
+    exclude_similar_check.grid(row=7, column=0, columnspan=2, sticky=tk.W, padx=10, pady=5)
+
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
+
+    def on_generate_passwords():
+        try:
+            count = int(count_entry.get())
+            length = int(length_entry.get())
+            num_uppercase = int(uppercase_entry.get())
+            num_lowercase = int(lowercase_entry.get())
+            num_digits = int(digits_entry.get())
+            num_special = int(special_entry.get())
+
+            if length <= 0 or count <= 0:
+                raise ValueError("Password length and count must be positive")
+            if num_uppercase < 0 or num_lowercase < 0 or num_digits < 0 or num_special < 0:
+                raise ValueError("Character counts cannot be negative")
+            if num_uppercase + num_lowercase + num_digits + num_special > length:
+                raise ValueError("Sum of character types exceeds password length")
+
+            exclude_similar = exclude_similar_var.get()
+
+            passwords = batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
+
+            with open("generated_passwords.txt", "a") as file:
+                for password in passwords:
+                    file.write(password + "\n")
+            messagebox.showinfo("Success", f"{count} passwords saved to generated_passwords.txt")
+
+        except ValueError as e:
+            messagebox.showerror("Input Error", str(e))
+
+    def update_batch_generator_theme(new_theme=None):
+        if new_theme:
+            theme = themes[new_theme]
+        else:
+            theme = themes[current_theme]
+
+        if is_dark_mode:
+            bg_color = "black"
+            fg_color = "white"
+            entry_bg = "gray15"
+            button_bg = "gray20"
+            button_fg = "white"
+        else:
+            bg_color = theme["bg"]
+            fg_color = theme["fg"]
+            entry_bg = theme["entry_bg"]
+            button_bg = theme["button_bg"]
+            button_fg = theme["button_fg"]
+
+        batch_generator_window.config(bg=bg_color)
+        main_frame.config(bg=bg_color)
+        for widget in main_frame.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.config(bg=bg_color, fg=fg_color)
+            elif isinstance(widget, tk.Entry):
+                widget.config(bg=entry_bg, fg=fg_color)
+            elif isinstance(widget, tk.Button):
+                widget.config(bg=button_bg, fg=button_fg)
+            elif isinstance(widget, tk.Checkbutton):
+                widget.config(bg=bg_color, fg=fg_color, selectcolor=bg_color)
+        for separator in main_frame.winfo_children():
+            if isinstance(separator, tk.Frame):
+                separator.config(bg=fg_color)
+
+    batch_generate_button = tk.Button(main_frame, text="Generate and Save", command=on_generate_passwords)
+    batch_generate_button.grid(row=9, column=0, columnspan=2, pady=20, padx=10, sticky=tk.EW)
+
+    update_batch_generator_theme(current_theme)
+    batch_generator_window.update_theme = update_batch_generator_theme
+    
+################################################################
+
 # APP GUI
 app = tk.Tk()
 app.title("PassLock Password Generator")
-app.geometry("500x600")
+app.geometry("750x900")
 app.resizable(False, False)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -513,6 +645,9 @@ password_menu.add_command(label="Open Passwords", command=show_saved_passwords)
 tools_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
+tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
+
+
 
 ################################################################
 
@@ -549,12 +684,12 @@ tk.Label(main_frame, text="Enter the number of special characters:").grid(row=5,
 special_entry = tk.Entry(main_frame, width=10)
 special_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
-
 exclude_similar_var = tk.BooleanVar()
 exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
-exclude_similar_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
+exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
+
+separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+separator.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
 save_password_var = tk.BooleanVar()
 save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
