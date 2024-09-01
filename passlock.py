@@ -8,8 +8,12 @@ import subprocess
 import json
 import platform
 from tkinter import filedialog, messagebox, Menu, font as tkfont
-from ctypes import windll
 from webbrowser import open_new_tab
+
+# IMPORT WINDLL ONLY IF ON WINDOWS
+if os.name == 'nt':
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
 
 # BASE PATH
 if hasattr(sys, '_MEIPASS'):
@@ -34,7 +38,6 @@ current_theme_index = 0
 current_theme = list(themes.keys())[current_theme_index]
 
 # DEFAULT SETTINGS
-windll.shcore.SetProcessDpiAwareness(1)
 is_dark_mode = False
 def reset_to_default():
     global current_font_size, current_opacity
