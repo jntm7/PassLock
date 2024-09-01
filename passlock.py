@@ -186,7 +186,11 @@ def generate_and_display_password():
         password = generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
         strength = password_strength(password)
 
-        password_output.config(text=password)
+        password_var.set(password)
+        if password_visible:
+            password_output.config(text=password)
+        else:
+            password_output.config(text="*" * len(password))
         strength_label.config(text=strength)
 
         if save_password_var.get():
@@ -337,10 +341,13 @@ def update_password_labels():
 
 # PASSWORD VISIBILITY
 def toggle_password_visibility():
-    if password_output.cget("show") == "*":
-        password_output.config(show="")
+    global password_visible
+    if password_visible:
+        password_output.config(text="*" * len(password_var.get()))
+        password_visible = False
     else:
-        password_output.config(show="*")
+        password_output.config(text=password_var.get())
+        password_visible = True
 
 # FONT SIZE
 def change_font_size(size):
@@ -386,12 +393,13 @@ def open_password_checker():
     password_entry.pack(side=tk.LEFT, padx=(0, 5))
 
     def toggle_password_visibility():
-        if password_entry.cget("show") == "*":
-            password_entry.config(show="")
-            toggle_button.config(text="Hide")
+        global password_visible
+        if password_visible:
+            password_output.config(text="*" * len(password))
+            password_visible = False
         else:
-            password_entry.config(show="*")
-            toggle_button.config(text="Show")
+            password_output.config(text=password_var.get())
+            password_visible = True
 
     toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
     toggle_button.pack(side=tk.LEFT)
@@ -600,6 +608,13 @@ app.rowconfigure(7, weight=1)
 app.rowconfigure(8, weight=1)
 app.rowconfigure(9, weight=1)
 
+# HOLD PASSWORD AS STRING VARIABLE
+password_var = tk.StringVar()
+password_var.set("")
+
+# TRACK PASSWORD VISIBILITY
+password_visible = False
+
 ################################################################
 
 ## MENU BAR
@@ -698,7 +713,7 @@ help_menu.add_command(label="Documentation", command=open_documentation)
 main_frame = tk.Frame(app, padx=20, pady=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-for i in range(14):
+for i in range(15):
     main_frame.grid_rowconfigure(i, weight=1)
 main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_columnconfigure(1, weight=1)
@@ -742,7 +757,7 @@ generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 password_label = tk.Label(main_frame, text="Generated Password:")
 password_label.grid(row=10, column=0, sticky=tk.W)
-password_output = tk.Label(main_frame, text="")
+password_output = tk.Label(main_frame, text="****")
 password_output.grid(row=10, column=1, sticky=tk.E)
 
 strength_label_text = tk.Label(main_frame, text="Password Strength:")
@@ -753,8 +768,11 @@ strength_label.grid(row=11, column=1, sticky=tk.E)
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
 copy_button.grid(row=12, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
+toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
+toggle_visibility_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+
 show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
-show_passwords_button.grid(row=13, column=0, columnspan=2, pady=10, sticky=tk.EW)
+show_passwords_button.grid(row=14, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
 app.bind('<Control-g>', lambda event: generate_and_display_password())
 app.bind('<Control-c>', lambda event: copy_to_clipboard())
