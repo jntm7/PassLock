@@ -434,38 +434,47 @@ def open_batch_password_generator():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    for i in range(8):
-        batch_generator_window.grid_rowconfigure(i, weight=1)
-    batch_generator_window.grid_columnconfigure(0, weight=1)
-    batch_generator_window.grid_columnconfigure(1, weight=1)
+    main_frame = tk.Frame(batch_generator_window, padx=20, pady=20)
+    main_frame.pack(fill=tk.BOTH, expand=True)
 
-    tk.Label(batch_generator_window, text="Enter the number of passwords to generate:").grid(row=0, column=0, sticky=tk.W)
-    count_entry = tk.Entry(batch_generator_window, width=10)
-    count_entry.grid(row=0, column=1, sticky=tk.E, padx=10, pady=5)
+    for i in range(9):
+        main_frame.grid_rowconfigure(i, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(1, weight=1)
 
-    tk.Label(batch_generator_window, text="Enter the desired password length:").grid(row=1, column=0, sticky=tk.W)
-    length_entry = tk.Entry(batch_generator_window, width=10)
-    length_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
-    tk.Label(batch_generator_window, text="Enter the number of uppercase letters:").grid(row=2, column=0, sticky=tk.W)
-    uppercase_entry = tk.Entry(batch_generator_window, width=10)
-    uppercase_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of passwords to generate:").grid(row=1, column=0, sticky=tk.W)
+    count_entry = tk.Entry(main_frame, width=10)
+    count_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(batch_generator_window, text="Enter the number of lowercase letters:").grid(row=3, column=0, sticky=tk.W)
-    lowercase_entry = tk.Entry(batch_generator_window, width=10)
-    lowercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the desired password length:").grid(row=2, column=0, sticky=tk.W)
+    length_entry = tk.Entry(main_frame, width=10)
+    length_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(batch_generator_window, text="Enter the number of digits:").grid(row=4, column=0, sticky=tk.W)
-    digits_entry = tk.Entry(batch_generator_window, width=10)
-    digits_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=3, column=0, sticky=tk.W)
+    uppercase_entry = tk.Entry(main_frame, width=10)
+    uppercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(batch_generator_window, text="Enter the number of special characters:").grid(row=5, column=0, sticky=tk.W)
-    special_entry = tk.Entry(batch_generator_window, width=10)
-    special_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=4, column=0, sticky=tk.W)
+    lowercase_entry = tk.Entry(main_frame, width=10)
+    lowercase_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of digits:").grid(row=5, column=0, sticky=tk.W)
+    digits_entry = tk.Entry(main_frame, width=10)
+    digits_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
+
+    tk.Label(main_frame, text="Enter the number of special characters:").grid(row=6, column=0, sticky=tk.W)
+    special_entry = tk.Entry(main_frame, width=10)
+    special_entry.grid(row=6, column=1, sticky=tk.E, padx=10, pady=5)
 
     exclude_similar_var = tk.BooleanVar()
-    exclude_similar_check = tk.Checkbutton(batch_generator_window, text="Exclude similar characters", variable=exclude_similar_var)
-    exclude_similar_check.grid(row=6, column=0, columnspan=2, sticky=tk.W, padx=10, pady=5)
+    exclude_similar_check = tk.Checkbutton(main_frame, text="Exclude similar characters", variable=exclude_similar_var)
+    exclude_similar_check.grid(row=7, column=0, columnspan=2, sticky=tk.W, padx=10, pady=5)
+
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
     def on_generate_passwords():
         try:
@@ -515,7 +524,8 @@ def open_batch_password_generator():
             button_fg = theme["button_fg"]
 
         batch_generator_window.config(bg=bg_color)
-        for widget in batch_generator_window.winfo_children():
+        main_frame.config(bg=bg_color)
+        for widget in main_frame.winfo_children():
             if isinstance(widget, tk.Label):
                 widget.config(bg=bg_color, fg=fg_color)
             elif isinstance(widget, tk.Entry):
@@ -524,11 +534,16 @@ def open_batch_password_generator():
                 widget.config(bg=button_bg, fg=button_fg)
             elif isinstance(widget, tk.Checkbutton):
                 widget.config(bg=bg_color, fg=fg_color, selectcolor=bg_color)
+        for separator in main_frame.winfo_children():
+            if isinstance(separator, tk.Frame):
+                separator.config(bg=fg_color)
 
-    batch_generate_button = tk.Button(batch_generator_window, text="Generate and Save", command=on_generate_passwords)
-    batch_generate_button.grid(row=7, column=0, columnspan=2, pady=20, padx=10)
+    batch_generate_button = tk.Button(main_frame, text="Generate and Save", command=on_generate_passwords)
+    batch_generate_button.grid(row=9, column=0, columnspan=2, pady=20, padx=10, sticky=tk.EW)
 
     update_batch_generator_theme(current_theme)
+    batch_generator_window.update_theme = update_batch_generator_theme
+    
 ################################################################
 
 # APP GUI
