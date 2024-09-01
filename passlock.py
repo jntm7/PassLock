@@ -8,6 +8,7 @@ import subprocess
 import json
 from tkinter import filedialog, messagebox, Menu, font as tkfont
 from ctypes import windll
+from webbrowser import open_new_tab
 
 # BASE PATH
 if hasattr(sys, '_MEIPASS'):
@@ -59,6 +60,37 @@ def reset_form():
 # EXIT APPLICATION
 def exit_app():
     app.quit()
+
+# SHORTCUT HELP
+def open_shortcut_help():
+    shortcut_info = """
+    Keyboard Shortcuts:
+
+    Ctrl+G: Generate Password
+    Ctrl+C: Copy Password
+    Ctrl+S: Save Password
+    Ctrl+O: Open Saved Passwords
+    Ctrl+B: Open Batch Generator
+    Ctrl+H: Open Password Strength Checker
+    Ctrl+E: Exit Application
+    
+    F1: Show This Help
+    F2: Open Documentation
+    """
+
+    messagebox.showinfo("Keyboard Shortcuts", shortcut_info)
+
+# DOCUMENTATION HELP
+
+def open_documentation():
+    open_new_tab("https://github.com/jntm7/PassLock")
+
+
+
+
+
+
+
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
