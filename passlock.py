@@ -385,11 +385,10 @@ def change_window_size(width, height):
 ################################################################
 
 # PASSWORD STRENGTH CHECKER
-
 def open_password_checker():
     checker_window = tk.Toplevel(app)
     checker_window.title("Password Strength Checker")
-    checker_window.geometry("525x375")
+    checker_window.geometry("400x300")
     checker_window.resizable(False, False)
 
     try:
@@ -397,31 +396,40 @@ def open_password_checker():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    tk.Label(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, pady=10, sticky="nsew")
-
+    tk.Label(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+    
     entry_frame = tk.Frame(checker_window)
-    entry_frame.grid(row=1, column=0, columnspan=2, pady=5, sticky="nsew")
-
-    password_entry = tk.Entry(entry_frame, show="*", width=30)
-    password_entry.pack(side=tk.LEFT, padx=(0, 5))
-
+    entry_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=5, sticky="nsew")
+    
+    password_entry = tk.Entry(entry_frame, show="*", width=50)
+    password_entry.pack(side=tk.LEFT, anchor=tk.CENTER, padx=(0, 5))
+    
     def toggle_password_visibility():
         global password_visible
         if password_visible:
-            password_output.config(text="*" * len(password_var.get()))
+            password_entry.config(show="*")
+            toggle_button.config(text="Show")
             password_visible = False
         else:
-            password_output.config(text=password_var.get())
+            password_entry.config(show="")
+            toggle_button.config(text="Hide")
             password_visible = True
-
+    
     toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
-    toggle_button.pack(side=tk.LEFT)
-
+    toggle_button.pack(side=tk.LEFT, padx=(5, 0))
+    
     result_label = tk.Label(checker_window, text="")
-    result_label.grid(row=2, column=0, columnspan=2, pady=10, sticky="nsew")
-
+    result_label.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+    
     canvas = tk.Canvas(checker_window, width=200, height=20, highlightthickness=0)
-    canvas.grid(row=3, column=0, columnspan=2, pady=10, sticky="nsew")
+    canvas.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+    
+    checker_window.grid_columnconfigure(0, weight=1)
+    checker_window.grid_columnconfigure(1, weight=1)
+    checker_window.grid_rowconfigure(0, weight=1)
+    checker_window.grid_rowconfigure(1, weight=1)
+    checker_window.grid_rowconfigure(2, weight=1)
+    checker_window.grid_rowconfigure(3, weight=1)
 
     def update_checker_theme(new_theme=None):
         if new_theme:
@@ -450,6 +458,13 @@ def open_password_checker():
                 widget.config(bg=entry_bg, fg=fg_color)
             elif isinstance(widget, tk.Button):
                 widget.config(bg=button_bg, fg=button_fg)
+            elif isinstance(widget, tk.Frame):
+                widget.config(bg=bg_color)
+                for sub_widget in widget.winfo_children():
+                    if isinstance(sub_widget, tk.Entry):
+                        sub_widget.config(bg=entry_bg, fg=fg_color)
+                    elif isinstance(sub_widget, tk.Button):
+                        sub_widget.config(bg=button_bg, fg=button_fg)
         canvas.config(bg=bg_color)
 
     update_checker_theme(current_theme)
@@ -458,15 +473,19 @@ def open_password_checker():
         password = password_entry.get()
         strength = password_strength(password)
         result_label.config(text=f"Password Strength: {strength}")
-
+    
         strength_colors = {"Weak": "red", "Moderate": "yellow", "Strong": "light green", "Very Strong": "dark green"}
         strength_values = {"Weak": 50, "Moderate": 100, "Strong": 150, "Very Strong": 200}
-
+    
+        canvas_width = canvas.winfo_width()
+        rect_width = strength_values[strength]
+        padding_x = (canvas_width - rect_width) // 2 
+    
         canvas.delete("all")
-        canvas.create_rectangle(0, 0, strength_values[strength], 20, fill=strength_colors[strength], outline="")
+        canvas.create_rectangle(padding_x, 0, padding_x + rect_width, 20, fill=strength_colors[strength], outline="")
 
-    check_button = tk.Button(checker_window, text="Check Strength", command=check_strength)
-    check_button.grid(row=4, column=0, columnspan=2, pady=20, sticky="nsew")
+    check_button = tk.Button(checker_window, text="Check Strength", width=25, command=check_strength)
+    check_button.grid(row=4, column=0, pady=10, padx=(100, 50), sticky="nsew")
 
     checker_window.update_theme = update_checker_theme
 
