@@ -74,7 +74,9 @@ git clone https://github.com/jntm7/PassLock.git
 cd passlock
 ```
 
-or [download the latest release](https://github.com/jntm7/PassLock/archive/refs/tags/v1.0.zip).
+or [download the latest release](https://github.com/jntm7/PassLock/archive/refs/tags/v1.2.zip).
+
+or simply run the executable `passlock.exe` found in [releases](https://github.com/jntm7/PassLock/releases) to launch the application.
 
 ### Install & Run
 
@@ -89,12 +91,6 @@ pip install pyperclip
 ```
 py passlock.py
 ```
-
-OR 
-
-- Run the executable:
-
-Simply open `passlock.exe` to launch the application.
 
 ### Enter Custom Parameters
 - Enter the desired password length.
