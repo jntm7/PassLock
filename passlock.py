@@ -9,6 +9,7 @@ import json
 import platform
 from tkinter import filedialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
+from cryptography.fernet import Fernet
 
 # IMPORT WINDLL ONLY IF ON WINDOWS
 if os.name == 'nt':
@@ -48,6 +49,12 @@ def reset_to_default():
     change_window_size(500, 600)
     if is_dark_mode:
         toggle_dark_mode()
+
+# GENERATED PASSWORDS FILE
+GENERATED_PASSWORDS_FILE = "generated_passwords.txt"
+
+# ENCRYPTED PASSWORDS FILE
+ENCRYPTED_PASSWORDS_FILE = "encrypted_passwords.txt"
 
 # RESET ENTRY FIELDS
 def reset_form():
@@ -202,7 +209,7 @@ def generate_and_display_password():
         strength_label.config(text=strength)
 
         if save_password_var.get():
-            with open("generated_passwords.txt", "a") as file:
+            with open(GENERATED_PASSWORDS_FILE, "a") as file:
                 file.write(password + "\n")
             messagebox.showinfo("Success", "Password saved to generated_passwords.txt")
 
@@ -238,8 +245,8 @@ def copy_to_clipboard():
     else:
         messagebox.showwarning("No Password", "Generate a password first!")
 
-def show_saved_passwords():
-    file_path = "generated_passwords.txt"
+def open_saved_passwords():
+    file_path = GENERATED_PASSWORDS_FILE
     if os.path.exists(file_path):
         # Windows
         if os.name == 'nt':
@@ -252,6 +259,56 @@ def show_saved_passwords():
             subprocess.call(('xdg-open', file_path))
     else:
         messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
+
+################################################################
+
+# ENCRYPTION 
+
+# GENERATE ENCRYPTION KEY
+def generate_encryption_key():
+    return Fernet.generate_key()
+
+# ENCRYPT PASSWORD
+def encrypt_password(password, key):
+    fernet = Fernet(key)
+    return fernet.encrypt(password.encode()).decode()
+
+# DECRYPT PASSWORD
+def decrypt_password(encrypted_password, key):
+    fernet = Fernet(key)
+    return fernet.decrypt(encrypted_password.encode()).decode()
+
+# SAVE ENCRYPTED PASSWORD
+def save_encrypted_password():
+    password = password_var.get()
+    if not password:
+        messagebox.showwarning("No Password", "Generate a password first!")
+        return
+    
+    key = generate_encryption_key()
+    encrypted_password = encrypt_password(password, key)
+    
+    with open(ENCRYPTED_PASSWORDS_FILE, "a") as file:
+        file.write(f"{encrypted_password}\n")
+    
+    # AUTO COPY TO CLIPBOARD
+    key_str = key.decode()
+    pyperclip.copy(key_str)
+    messagebox.showinfo("Encryption Key", f"Your encryption key has been generated and copied to the clipboard:\n\n{key_str}\n\nSave this key securely. You will need it to decrypt the password.")
+
+# OPEN ENCRYPTED PASSWORDS
+def open_encrypted_passwords():
+    if os.path.exists(ENCRYPTED_PASSWORDS_FILE):
+        if os.name == 'nt':  # Windows
+            os.startfile(ENCRYPTED_PASSWORDS_FILE)
+        elif platform.system() == 'Darwin':  # macOS
+            subprocess.call(('open', ENCRYPTED_PASSWORDS_FILE))
+        else:  # Linux
+            subprocess.call(('xdg-open', ENCRYPTED_PASSWORDS_FILE))
+    else:
+        messagebox.showinfo("No Encrypted Passwords", "No encrypted passwords have been saved yet!")
+
+################################################################
 
 # LIGHT / DARK MODE
 def toggle_dark_mode():
@@ -571,7 +628,7 @@ def open_batch_password_generator():
 
             passwords = batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar)
 
-            with open("generated_passwords.txt", "a") as file:
+            with open(GENERATED_PASSWORDS_FILE, "a") as file:
                 for password in passwords:
                     file.write(password + "\n")
             messagebox.showinfo("Success", f"{count} passwords saved to generated_passwords.txt")
@@ -723,7 +780,7 @@ theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
 password_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Password", menu=password_menu)
 password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
-password_menu.add_command(label="Open Passwords", command=show_saved_passwords)
+password_menu.add_command(label="Open Passwords", command=open_saved_passwords)
 
 # TOOLS
 
@@ -797,22 +854,28 @@ strength_label_text.grid(row=11, column=0, sticky=tk.W)
 strength_label = tk.Label(main_frame, text="")
 strength_label.grid(row=11, column=1, sticky=tk.E)
 
+encrypt_save_button = tk.Button(main_frame, text="Save as Encrypted Password", command=save_encrypted_password)
+encrypt_save_button.grid(row=12, column=0, columnspan=2, pady=5, sticky=tk.EW)
+
 separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
+separator.grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
 toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
-toggle_visibility_button.grid(row=13, column=0, columnspan=2, pady=5, sticky=tk.EW)
+toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
+copy_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-show_passwords_button = tk.Button(main_frame, text="Show Saved Passwords", command=show_saved_passwords)
-show_passwords_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
+show_passwords_button = tk.Button(main_frame, text="Open Saved Passwords", command=open_saved_passwords)
+show_passwords_button.grid(row=16, column=0, columnspan=2, pady=5, sticky=tk.EW)
+
+open_encrypted_passwords_button = tk.Button(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
+open_encrypted_passwords_button.grid(row=17, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
 app.bind('<Control-g>', lambda event: generate_and_display_password())
 app.bind('<Control-c>', lambda event: copy_to_clipboard())
 app.bind('<Control-s>', lambda event: save_password())
-app.bind('<Control-o>', lambda event: show_saved_passwords())
+app.bind('<Control-o>', lambda event: open_saved_passwords())
 app.bind('<Control-b>', lambda event: open_batch_password_generator())
 app.bind('<Control-h>', lambda event: open_password_checker())
 app.bind('<Control-e>', lambda event: exit_app())
