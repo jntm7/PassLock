@@ -56,6 +56,9 @@ GENERATED_PASSWORDS_FILE = "generated_passwords.txt"
 # ENCRYPTED PASSWORDS FILE
 ENCRYPTED_PASSWORDS_FILE = "encrypted_passwords.txt"
 
+# ENCRYPTED KEY FILE
+KEY_FILE = "encryption_key.key"
+
 # RESET ENTRY FIELDS
 def reset_form():
 
@@ -236,7 +239,6 @@ def save_password_as():
         current_file_path = file_path
         save_password()
 
-
 def copy_to_clipboard():
     password = password_var.get()
     if password:
@@ -266,7 +268,18 @@ def open_saved_passwords():
 
 # GENERATE ENCRYPTION KEY
 def generate_encryption_key():
-    return Fernet.generate_key()
+    key = Fernet.generate_key()
+    with open(KEY_FILE, "wb") as key_file:
+        key_file.write(key)
+    return key
+
+# LOAD ENCRYPTION KEY
+def load_encryption_key():
+    if os.path.exists(KEY_FILE):
+        with open(KEY_FILE, "rb") as key_file:
+            return key_file.read()
+    else:
+        return generate_encryption_key()
 
 # ENCRYPT PASSWORD
 def encrypt_password(password, key):
@@ -285,28 +298,59 @@ def save_encrypted_password():
         messagebox.showwarning("No Password", "Generate a password first!")
         return
     
-    key = generate_encryption_key()
+    key = load_encryption_key()
     encrypted_password = encrypt_password(password, key)
     
-    with open(ENCRYPTED_PASSWORDS_FILE, "a") as file:
-        file.write(f"{encrypted_password}\n")
-    
-    # AUTO COPY TO CLIPBOARD
-    key_str = key.decode()
-    pyperclip.copy(key_str)
-    messagebox.showinfo("Encryption Key", f"Your encryption key has been generated and copied to the clipboard:\n\n{key_str}\n\nSave this key securely. You will need it to decrypt the password.")
+    try:
+        with open(ENCRYPTED_PASSWORDS_FILE, "a") as file:
+            file.write(f"{encrypted_password}\n")
+        
+        # AUTO COPY TO CLIPBOARD
+        key_str = key.decode()
+        pyperclip.copy(key_str)
+        messagebox.showinfo("Encryption Key", f"Your encryption key has been generated and copied to the clipboard:\n\n{key_str}\n\nSave this key securely. You will need it to decrypt the password.")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred while saving the password: {e}")
 
 # OPEN ENCRYPTED PASSWORDS
 def open_encrypted_passwords():
     if os.path.exists(ENCRYPTED_PASSWORDS_FILE):
-        if os.name == 'nt':  # Windows
-            os.startfile(ENCRYPTED_PASSWORDS_FILE)
-        elif platform.system() == 'Darwin':  # macOS
-            subprocess.call(('open', ENCRYPTED_PASSWORDS_FILE))
-        else:  # Linux
-            subprocess.call(('xdg-open', ENCRYPTED_PASSWORDS_FILE))
+        try:
+            if os.name == 'nt':  # Windows
+                os.startfile(ENCRYPTED_PASSWORDS_FILE)
+            elif platform.system() == 'Darwin':  # macOS
+                subprocess.call(('open', ENCRYPTED_PASSWORDS_FILE))
+            else:  # Linux
+                subprocess.call(('xdg-open', ENCRYPTED_PASSWORDS_FILE))
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while opening the file: {e}")
     else:
         messagebox.showinfo("No Encrypted Passwords", "No encrypted passwords have been saved yet!")
+
+# DECRYPT AND DISPLAY PASSWORDS
+def decrypt_and_display_passwords():
+    key = load_encryption_key()
+    if not key:
+        messagebox.showwarning("No Key", "No encryption key found!")
+        return
+    
+    if not os.path.exists(ENCRYPTED_PASSWORDS_FILE):
+        messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
+        return
+    
+    try:
+        with open(ENCRYPTED_PASSWORDS_FILE, "r") as file:
+            encrypted_passwords = file.readlines()
+        
+        decrypted_passwords = []
+        for encrypted_password in encrypted_passwords:
+            decrypted_password = decrypt_password(encrypted_password.strip(), key)
+            decrypted_passwords.append(decrypted_password)
+        
+        decrypted_passwords_str = "\n".join(decrypted_passwords)
+        messagebox.showinfo("Decrypted Passwords", f"Your decrypted passwords are:\n\n{decrypted_passwords_str}")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred while decrypting the passwords: {e}")
 
 ################################################################
 

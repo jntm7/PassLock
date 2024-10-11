@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .idea/
 generated_passwords.txt
+encrypted_passwords.txt
 *.toc
 *.pyz
 *.pkg
