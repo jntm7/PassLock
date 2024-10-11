@@ -3,6 +3,7 @@ __pycache__/
 .idea/
 generated_passwords.txt
 encrypted_passwords.txt
+encryption_key.key
 *.toc
 *.pyz
 *.pkg
