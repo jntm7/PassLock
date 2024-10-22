@@ -89,12 +89,13 @@ def open_keyboard_shortcuts():
     Ctrl+V: Toggle Password Visibility
 
     Ctrl+O: Open Saved Passwords
+    Ctrl+E: Open Encrypted Passwords
     Ctrl+B: Open Batch Generator
     Ctrl+H: Open Password Strength Checker
 
     Ctrl+D: Toggle Dark Mode
     Ctrl+T: Change Theme
-    Ctrl+E: Exit Application
+    Ctrl+X: Exit Application
 
     F1: Keyboard Shortcuts
     F2: Open Documentation
@@ -916,16 +917,18 @@ show_passwords_button.grid(row=16, column=0, columnspan=2, pady=5, sticky=tk.EW)
 open_encrypted_passwords_button = tk.Button(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
 open_encrypted_passwords_button.grid(row=17, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-app.bind('<Control-g>', lambda event: generate_and_display_password())
-app.bind('<Control-c>', lambda event: copy_to_clipboard())
-app.bind('<Control-s>', lambda event: save_password())
-app.bind('<Control-o>', lambda event: open_saved_passwords())
 app.bind('<Control-b>', lambda event: open_batch_password_generator())
-app.bind('<Control-h>', lambda event: open_password_checker())
-app.bind('<Control-e>', lambda event: exit_app())
-app.bind('<Control-v>', lambda event: toggle_password_visibility())
+app.bind('<Control-c>', lambda event: copy_to_clipboard())
 app.bind('<Control-d>', lambda event: toggle_dark_mode())
+app.bind('<Control-e>', lambda event: save_encrypted_password())
+app.bind('<Control-g>', lambda event: generate_and_display_password())
+app.bind('<Control-h>', lambda event: open_password_checker())
+app.bind('<Control-o>', lambda event: open_saved_passwords())
+app.bind('<Control-s>', lambda event: save_password())
 app.bind('<Control-t>', lambda event: rotate_theme())
+app.bind('<Control-v>', lambda event: toggle_password_visibility())
+app.bind('<Control-x>', lambda event: exit_app())
+
 app.bind('<F1>', lambda event: open_keyboard_shortcuts())
 app.bind('<F2>', lambda event: open_documentation())
 
