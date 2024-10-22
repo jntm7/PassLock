@@ -187,6 +187,9 @@ def password_strength(password):
 def generate_and_display_password():
 
     try:
+        if not length_entry.get() or not uppercase_entry.get() or not lowercase_entry.get() or not digits_entry.get() or not special_entry.get():
+            raise ValueError("Please enter values for all fields to generate a password.")
+
         length = int(length_entry.get())
         num_uppercase = int(uppercase_entry.get())
         num_lowercase = int(lowercase_entry.get())
@@ -219,7 +222,6 @@ def generate_and_display_password():
 
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
-
 
 # SAVE PASSWORD
 current_file_path = None
