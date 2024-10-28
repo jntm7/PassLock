@@ -7,7 +7,7 @@ import sys
 import subprocess
 import json
 import platform
-from tkinter import filedialog, messagebox, Menu, font as tkfont
+from tkinter import filedialog, simpledialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
 from cryptography.fernet import Fernet
 
@@ -280,7 +280,9 @@ def generate_encryption_key():
 def load_encryption_key():
     if os.path.exists(KEY_FILE):
         with open(KEY_FILE, "rb") as key_file:
-            return key_file.read()
+            key = key_file.read()
+            print(f"Loaded key: {key}")
+            return key
     else:
         return generate_encryption_key()
 
@@ -312,6 +314,7 @@ def save_encrypted_password():
         key_str = key.decode()
         pyperclip.copy(key_str)
         messagebox.showinfo("Encryption Key", f"Your encryption key has been generated and copied to the clipboard:\n\n{key_str}\n\nSave this key securely. You will need it to decrypt the password.")
+    
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred while saving the password: {e}")
 
@@ -332,7 +335,7 @@ def open_encrypted_passwords():
 
 # DECRYPT AND DISPLAY PASSWORDS
 def decrypt_and_display_passwords():
-    key = load_encryption_key()
+    key = simpledialog.askstring("Encryption Key", "Enter your encryption key:")
     if not key:
         messagebox.showwarning("No Key", "No encryption key found!")
         return
@@ -835,6 +838,7 @@ tools_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
+tools_menu.add_command(label="Decrypt Passwords", command=decrypt_and_display_passwords)
 
 # HELP
 help_menu = Menu(menubar, tearoff=0)
