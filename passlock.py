@@ -267,7 +267,7 @@ def open_saved_passwords():
 
 ################################################################
 
-# ENCRYPTION 
+# ENCRYPTION
 
 # GENERATE ENCRYPTION KEY
 def generate_encryption_key():
@@ -281,6 +281,8 @@ def load_encryption_key():
     if os.path.exists(KEY_FILE):
         with open(KEY_FILE, "rb") as key_file:
             key = key_file.read()
+            if len(key) != 44:
+                raise ValueError("Invalid encryption key length")
             print(f"Loaded key: {key}")
             return key
     else:
@@ -334,7 +336,7 @@ def open_encrypted_passwords():
         messagebox.showinfo("No Encrypted Passwords", "No encrypted passwords have been saved yet!")
 
 # DECRYPT AND DISPLAY PASSWORDS
-def decrypt_and_display_passwords():
+def open_decrypt_window():
     key = simpledialog.askstring("Encryption Key", "Enter your encryption key:")
     if not key:
         messagebox.showwarning("No Key", "No encryption key found!")
@@ -838,7 +840,7 @@ tools_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Tools", menu=tools_menu)
 tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
 tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
-tools_menu.add_command(label="Decrypt Passwords", command=decrypt_and_display_passwords)
+tools_menu.add_command(label="Decrypt Passwords", command=open_decrypt_window)
 
 # HELP
 help_menu = Menu(menubar, tearoff=0)
