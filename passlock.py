@@ -10,6 +10,12 @@ import platform
 from tkinter import filedialog, simpledialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
 from cryptography.fernet import Fernet
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.auth.transport.requests import Request
+import json
 
 # IMPORT WINDLL ONLY IF ON WINDOWS
 if os.name == 'nt':
@@ -92,13 +98,14 @@ def open_keyboard_shortcuts():
     Ctrl+E: Open Encrypted Passwords
     Ctrl+B: Open Batch Generator
     Ctrl+H: Open Password Strength Checker
-
+    
     Ctrl+D: Toggle Dark Mode
     Ctrl+T: Change Theme
     Ctrl+X: Exit Application
 
     F1: Keyboard Shortcuts
     F2: Open Documentation
+    F3: Sync to Cloud Storage
     """
 
     messagebox.showinfo("Keyboard Shortcuts", shortcut_info)
@@ -106,6 +113,70 @@ def open_keyboard_shortcuts():
 # DOCUMENTATION HELP
 def open_documentation():
     open_new_tab("https://github.com/jntm7/PassLock")
+
+# CLOUD STORAGE SYNC
+def sync_to_cloud():
+    try:
+        SCOPES = ['https://www.googleapis.com/auth/drive.file']
+        creds = None
+    
+        # LOAD CREDENTIALS
+        if os.path.exists('token.json'):
+            with open('token.json', 'r') as token:
+                token_data = json.load(token)
+                creds = Credentials.from_authorized_user_info(token_data, SCOPES)
+
+        # REQUEST CREDENTIALS
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+
+            # SAVE CREDENTIALS
+            with open('token.json', 'w') as token:
+                json.dump({
+                    'token': creds.token,
+                    'refresh_token': creds.refresh_token,
+                    'token_uri': creds.token_uri,
+                    'client_id': creds.client_id,
+                    'client_secret': creds.client_secret,
+                    'scopes': creds.scopes
+                }, token)
+
+        # SERVICE
+        service = build('drive', 'v3', credentials=creds)
+
+        # FILE METADATA
+        file_metadata = {
+            'name': 'generated_passwords.txt',
+            'mimeType': 'text/plain'
+        }
+
+        # FILE UPLOAD
+        if os.path.exists(GENERATED_PASSWORDS_FILE):
+            # Check if the file exists in Drive
+            results = service.files().list(
+                q="name='generated_passwords.txt'",
+                spaces='drive',
+                fields='files(id)'
+            ).execute()
+            
+            media = MediaFileUpload(GENERATED_PASSWORDS_FILE, mimetype='text/plain', resumable=True)
+
+            if results['files']:
+                file_id = results['files'][0]['id']
+                service.files().update(fileId=file_id, media_body=media).execute()
+                messagebox.showinfo("Success", "File updated on Google Drive!")
+            else:
+                service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+                messagebox.showinfo("Success", "File uploaded to Google Drive!")
+        else:
+            messagebox.showwarning("File Missing", "No generated passwords file found!")
+
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred during Google Drive sync: {e}")
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -845,8 +916,9 @@ tools_menu.add_command(label="Decrypt Passwords", command=open_decrypt_window)
 # HELP
 help_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=help_menu)
+help_menu.add_command(label="About", command=open_documentation)
 help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
-help_menu.add_command(label="Documentation", command=open_documentation)
+help_menu.add_command(label="Sync to Cloud", command=sync_to_cloud)
 
 ################################################################
 
@@ -938,6 +1010,7 @@ app.bind('<Control-v>', lambda event: toggle_password_visibility())
 app.bind('<Control-x>', lambda event: exit_app())
 
 app.bind('<F1>', lambda event: open_keyboard_shortcuts())
-app.bind('<F2>', lambda event: open_documentation())
+app.bind('<F2>', lambda event: open_documentation()) 
+app.bind('<F3>', lambda event: sync_to_cloud())
 
 app.mainloop()

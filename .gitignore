@@ -4,6 +4,8 @@ __pycache__/
 generated_passwords.txt
 encrypted_passwords.txt
 encryption_key.key
+credentials.json
+token.json
 *.toc
 *.pyz
 *.pkg

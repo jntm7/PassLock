@@ -58,6 +58,7 @@ Generate passwords of desired length by specifying the number of:
     - Ctrl+E: Exit Application
     - F1: View Keyboard Shortcuts
     - F2: Open Documentation
+    - F3: Sync to Cloud (Google Drive)
 
 - Menu bar navigation makes all settings and tools easily accessible.
 
@@ -82,8 +83,6 @@ cd passlock
 
 or [download the latest release](https://github.com/jntm7/PassLock/archive/refs/tags/v1.2.zip).
 
-or simply run the executable `passlock.exe` found in [releases](https://github.com/jntm7/PassLock/releases) to launch the application.
-
 ### Install & Run
 
 - Install required packages:
@@ -106,7 +105,13 @@ py passlock.py
 
 ### Password Generation
 - Click `Generate Password`, to display the generated password and its password strength, based on the parameters chosen.
-- Click `Copy to Clipboard`, to copy the generated password, to be pasted somewhere of your convenience.
-- Click `Show Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
+- Click `Toggle Password Visibility`, to toggle visibility for enhanced privacy.
+- Click `Copy Password to Clipboard`, to copy the generated password, to be pasted somewhere of your convenience.
+- Click `Open Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
 
+#### Batch Generation
 To generate multiple passwords in one instance using the same criteria, go to `Tools > Batch Generator`.
+
+#### Password Encryption
+- Click `Save as Encrypted Password`, to generate an encryption key and save to `encrypted_passwords.txt`.
+- Click `Open Encrypted Passwords`, to open `encrypted_passwords.txt`.
