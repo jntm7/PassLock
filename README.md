@@ -19,6 +19,12 @@ Generate passwords of desired length by specifying the number of:
 - Evaluates the strength of the generated password:
 `Weak - Moderate - Strong - Very Strong`
 
+### Password Encryption
+
+- Built-in encryption option when generating passwords
+- Encryption key is automatically copied to clipboard
+- Encrypted passwords are stored separated from regular generated passwords
+
 ### Copy, Save & View Passwords
 
 - Hide generated password by toggling password visibility
@@ -83,7 +89,7 @@ or simply run the executable `passlock.exe` found in [releases](https://github.c
 - Install required packages:
 
 ```
-pip install pyperclip
+pip install -r requirements.txt
 ```
 
 - Run the application:
