@@ -1,6 +1,6 @@
-# PassLock
-
-<img src="https://github.com/jntm7/PassLock/assets/108718802/737c5d25-b073-48dd-98cb-767bdc9b4a38.png" width=5% height=5%> A simple GUI that generates and saves customizable passwords.
+<h1 align="center"><img src="https://github.com/jntm7/PassLock/assets/108718802/737c5d25-b073-48dd-98cb-767bdc9b4a38.png" width="5%" height="5%"></img>&nbsp;&nbsp;PassLock</h1>
+<h3 align="center">Generate, Manage and Store Your Custom Passwords!</h3>
+<hr>
 
 ## 📢 Features
 
@@ -110,7 +110,7 @@ py passlock.py
 - Click `Open Saved Passwords`, to open `generated_passwords.txt` and view your saved passwords.
 
 #### Batch Generation
-To generate multiple passwords in one instance using the same criteria, go to `Tools > Batch Generator`.
+- Navigate to `Tools > Batch Generator`, to generate multiple passwords in one instance using the same criteria.
 
 #### Password Encryption
 - Click `Save as Encrypted Password`, to generate an encryption key and save to `encrypted_passwords.txt`.
