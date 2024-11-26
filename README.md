@@ -32,18 +32,18 @@ Generate passwords of desired length by specifying the number of:
 - Save generated passwords to file: `generated_passwords.txt`
 - Open `generated_passwords.txt` directly from the program
 
-### Window Customization
+### Customization
 
-- Select from three preset window configurations
+- Preset window configurations
 - Change font size
 - Change window size
 - Change window opacity
 - Toggle between light mode (default) and dark mode
-- Select from 10 themes: "Arctic", "Bamboo", "Chocolate", "Forest", "Lavender", "Mint", "Ocean", "Peach", "Slate", "Sunset"
+- Change colour theme
 
 ![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
 
-### Intuitive Interface
+### Accessibility
 
 - Supports keyboard shortcuts:
     - Ctrl+G: Generate Password
@@ -59,8 +59,6 @@ Generate passwords of desired length by specifying the number of:
     - F1: View Keyboard Shortcuts
     - F2: Open Documentation
     - F3: Sync to Cloud (Google Drive)
-
-- Menu bar navigation makes all settings and tools easily accessible.
 
 ## ⚙️ Example Usage:
 
