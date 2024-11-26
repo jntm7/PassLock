@@ -256,7 +256,6 @@ def password_strength(password):
     return strength
 
 def generate_and_display_password():
-
     try:
         if not length_entry.get() or not uppercase_entry.get() or not lowercase_entry.get() or not digits_entry.get() or not special_entry.get():
             raise ValueError("Please enter values for all fields to generate a password.")
@@ -287,9 +286,16 @@ def generate_and_display_password():
         strength_label.config(text=strength)
 
         if save_password_var.get():
+            password_name = prompt_for_password_name()
             with open(GENERATED_PASSWORDS_FILE, "a") as file:
-                file.write(password + "\n")
-            messagebox.showinfo("Success", "Password saved to generated_passwords.txt")
+                if password_name:
+                    file.write(f"{password_name}: {password}\n")
+                else:
+                    file.write(f"{password}\n")
+            if password_name:
+                messagebox.showinfo("Success", f"Password saved to generated_passwords.txt with name '{password_name}'.")
+            else:
+                messagebox.showinfo("Success", "Password saved to generated_passwords.txt without a name.")
 
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
@@ -297,11 +303,39 @@ def generate_and_display_password():
 # SAVE PASSWORD
 current_file_path = None
 
+class PasswordNameWindow(simpledialog.Dialog):
+    def __init__(self, parent, title=None):
+        self.default_width = 300
+        self.default_height = 150
+        super().__init__(parent, title)
+
+    def body(self, master):
+        self.geometry(f"{self.default_width}x{self.default_height}")
+        tk.Label(master, text="Enter a name for the password:").grid(row=0)
+        self.entry = tk.Entry(master)
+        self.entry.grid(row=1, padx=5)
+        return self.entry
+
+    def apply(self):
+        self.result = self.entry.get()
+
+def prompt_for_password_name():
+    dialog = PasswordNameWindow(app, "Password Name")
+    return dialog.result
+
 def save_password():
     global current_file_path
+
+    password = password_var.get()
+    if not password:
+        messagebox.showwarning("No Password", "Password has not been generated.")
+        return
+
+    password_name = prompt_for_password_name()
+
     if current_file_path:
         with open(current_file_path, "a") as file:
-            file.write(password_output.cget("text") + "\n")
+            file.write(f"{password_name}: {password}\n")
         messagebox.showinfo("Success", f"Password saved to {current_file_path}")
     else:
         save_password_as()
