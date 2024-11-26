@@ -41,8 +41,6 @@ Generate passwords of desired length by specifying the number of:
 - Toggle between light mode (default) and dark mode
 - Change colour theme
 
-![showcase](https://github.com/user-attachments/assets/b6159c10-85b8-4f73-92ab-57aba4fddb67)
-
 ### Accessibility
 
 - Supports keyboard shortcuts:
@@ -60,17 +58,9 @@ Generate passwords of desired length by specifying the number of:
     - F2: Open Documentation
     - F3: Sync to Cloud (Google Drive)
 
-## ⚙️ Example Usage:
-
-![passlock-demo](https://github.com/user-attachments/assets/d39247b2-a3f7-4735-aec6-11463955abd1)
-
 ## 🛠️ How To Use
 
-Ensure that you have Python 3.6 or newer.
-
-You can download it from the [Python Official Website](https://www.python.org/downloads/).
-
-Tkinter should be included with most Python installations.
+Ensure that you have Python 3.6 or newer. You can download it from the [Python Official Website](https://www.python.org/downloads/).
 
 ### Clone the Repository
 
@@ -83,7 +73,7 @@ or [download the latest release](https://github.com/jntm7/PassLock/archive/refs/
 
 ### Install & Run
 
-- Install required packages:
+- From your terminal of choice, install the required packages:
 
 ```
 pip install -r requirements.txt
@@ -95,11 +85,12 @@ pip install -r requirements.txt
 py passlock.py
 ```
 
-### Enter Custom Parameters
+### Custom Parameters
 - Enter the desired password length.
 - Enter the number of each type of character.
 - Specify whether to exclude similar characters.
 - Specify whether to save the generated password to a file.
+- Enter a password name when prompted (defaults to null if not provided).
 
 ### Password Generation
 - Click `Generate Password`, to display the generated password and its password strength, based on the parameters chosen.
