@@ -4,65 +4,83 @@
         "fg": "black", 
         "entry_bg": "white", 
         "button_bg": "SystemButtonFace", 
-        "button_fg": "black"},
-    "Arctic":{
-        "bg": "#E1E8ED", 
-        "fg": "#2E4057", 
-        "entry_bg": "#D4E6F1", 
-        "button_bg": "#A9C4E2", 
-        "button_fg": "#FFFFFF"},
-    "Bamboo":{
-        "bg": "#E3DAC9", 
-        "fg": "#4B5320", 
-        "entry_bg": "#D9EAD3", 
-        "button_bg": "#8F9779", 
-        "button_fg": "#3B3B3B"},
-    "Chocolate":{
-        "bg": "#D2B48C", 
-        "fg": "#3B1C14", 
-        "entry_bg": "#F4A460", 
-        "button_bg": "#8B4513", 
-        "button_fg": "#FFFFFF"},
-    "Forest":{
-        "bg": "#F0FFF0", 
-        "fg": "#229B22", 
-        "entry_bg": "#98FB98", 
-        "button_bg": "#2E9B57", 
-        "button_fg": "#FFFFFF"},
-    "Lavender":{
+        "button_fg": "black"
+    },
+    "Midnight": {
+        "bg": "#191970",
+        "fg": "#FFFFFF",
+        "entry_bg": "#000080",
+        "button_bg": "#483D8B",
+        "button_fg": "#FFFFFF"
+    },
+    "Obsidian": {
+        "bg": "#F5F5F5", 
+        "fg": "#2C3E50", 
+        "entry_bg": "#FFFFFF", 
+        "button_bg": "#34495E", 
+        "button_fg": "#FFFFFF"
+    },
+    "Lavender": {
         "bg": "#E6E6FA", 
         "fg": "#4B0082", 
         "entry_bg": "#F5F5F5", 
         "button_bg": "#9370DB", 
-        "button_fg": "#FFFFFF"},
-    "Mint":{
-        "bg": "#F5FFFA", 
-        "fg": "#006400", 
-        "entry_bg": "#E4F8F7", 
-        "button_bg": "#98FF98", 
-        "button_fg": "#006400"},
-    "Ocean":{
-        "bg": "#E0FFFF", 
-        "fg": "#2F4F4F", 
-        "entry_bg": "#AFEEEE", 
-        "button_bg": "#00CED1", 
-        "button_fg": "#FFFFFF"},
-    "Peach":{
-        "bg": "#FFE5B4", 
-        "fg": "#D2691E", 
-        "entry_bg": "#FFDAB9", 
-        "button_bg": "#FFB347", 
-        "button_fg": "#FFFFFF"},
-    "Slate":{
+        "button_fg": "#FFFFFF"
+    },
+    "Arctic": {
+        "bg": "#E1E8ED", 
+        "fg": "#2E4057", 
+        "entry_bg": "#D4E6F1", 
+        "button_bg": "#A9C4E2", 
+        "button_fg": "#FFFFFF"
+    },
+    "Slate": {
         "bg": "#708090", 
         "fg": "#FFFFFF", 
         "entry_bg": "#C0C0C0", 
         "button_bg": "#778899", 
-        "button_fg": "#FFFFFF"},
-    "Sunset":{
-        "bg": "#FFCCBC", 
-        "fg": "#3B1C32", 
-        "entry_bg": "#FFDAB9", 
-        "button_bg": "#FF7043", 
-        "button_fg": "#FFFFFF"}
+        "button_fg": "#FFFFFF"
+    },
+    "Ocean": {
+        "bg": "#E0F2F1", 
+        "fg": "#006064", 
+        "entry_bg": "#FFFFFF", 
+        "button_bg": "#00838F", 
+        "button_fg": "#FFFFFF"
+    },
+    "Jade": {
+        "bg": "#F0F4F0", 
+        "fg": "#2F4F4F", 
+        "entry_bg": "#FFFFFF", 
+        "button_bg": "#8FBC8F", 
+        "button_fg": "#FFFFFF"
+    },
+    "Forest": {
+        "bg": "#F0FFF0", 
+        "fg": "#229B22", 
+        "entry_bg": "#98FB98", 
+        "button_bg": "#2E9B57", 
+        "button_fg": "#FFFFFF"
+    },
+    "Bamboo": {
+        "bg": "#E3DAC9", 
+        "fg": "#4B5320", 
+        "entry_bg": "#D9EAD3", 
+        "button_bg": "#8F9779", 
+        "button_fg": "#3B3B3B"
+    },
+    "Wood": {
+        "bg": "#F5E6D3", 
+        "fg": "#5D4037", 
+        "entry_bg": "#FFFFFF", 
+        "button_bg": "#8D6E63", 
+        "button_fg": "#FFFFFF"
+    },
+    "Chocolate": {
+        "bg": "#D2B48C", 
+        "fg": "#3B1C14", 
+        "entry_bg": "#F4A460", 
+        "button_bg": "#8B4513", 
+        "button_fg": "#FFFFFF"
+    }
 }
