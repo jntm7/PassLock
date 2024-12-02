@@ -335,7 +335,10 @@ def save_password():
 
     if current_file_path:
         with open(current_file_path, "a") as file:
-            file.write(f"{password_name}: {password}\n")
+            if password_name:
+                file.write(f"{password_name}: {password}\n")
+            else:
+                file.write(f"{password}\n")
         messagebox.showinfo("Success", f"Password saved to {current_file_path}")
     else:
         save_password_as()
