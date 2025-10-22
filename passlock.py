@@ -1051,3 +1051,7 @@ app.bind('<F2>', lambda event: open_documentation())
 app.bind('<F3>', lambda event: sync_to_cloud())
 
 app.mainloop()
+
+# GUARD FOR TESTS
+if __name__ == "__main__":
+    app.mainloop()
