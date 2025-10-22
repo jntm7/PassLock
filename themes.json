@@ -82,5 +82,12 @@
         "entry_bg": "#F4A460", 
         "button_bg": "#8B4513", 
         "button_fg": "#FFFFFF"
+    },
+    "Mocha": {
+        "bg": "#ECE2D0",
+        "fg": "#2E1B17",
+        "entry_bg": "#FFF7EF",
+        "button_bg": "#6F4E37",
+        "button_fg": "#FFFFFF"
     }
 }

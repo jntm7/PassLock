@@ -12,3 +12,4 @@ token.json
 *.spec
 build/
 dist/
+.aider*
