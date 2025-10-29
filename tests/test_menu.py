@@ -3,7 +3,7 @@ import passlock
 import tkinter as tk
 
 @pytest.fixture
-# CREATE APP
+# CREATE APP INSTANCE
 
 def app():
     test_app = passlock.create_app()
@@ -11,8 +11,24 @@ def app():
     # CLEANUP
     test_app.destroy()
 
+# GET SUBMENU BY LABEL
+
+def _get_submenu_by_label(root_menu, app, label):
+    end_index = root_menu.index('end')
+    if end_index is None:
+        return None
+    for i in range(end_index + 1):
+        try:
+            if root_menu.entrycget(i, "label") == label:
+                menu_name = root_menu.entrycget(i, "menu")
+                if menu_name:
+                    return app.nametowidget(menu_name)
+        except tk.TclError:
+            continue
+    return None
+
 # ===============================================================
-# TEST MENUBAR TOP-LEVEL LABELS
+# TEST: MENUBAR TOP-LEVEL LABELS
 
 def test_menubar_top_level_labels(app):
     menubar = passlock.menubar
@@ -33,24 +49,7 @@ def test_menubar_top_level_labels(app):
     assert expected.issubset(set(labels))
 
 # ===============================================================
-# GET SUBMENU BY LABEL
-
-def _get_submenu_by_label(root_menu, app, label):
-    end_index = root_menu.index('end')
-    if end_index is None:
-        return None
-    for i in range(end_index + 1):
-        try:
-            if root_menu.entrycget(i, "label") == label:
-                menu_name = root_menu.entrycget(i, "menu")
-                if menu_name:
-                    return app.nametowidget(menu_name)
-        except tk.TclError:
-            continue
-    return None
-
-# ===============================================================
-# TEST THEME OPTIONS MATCHES JSON
+# TEST: THEME OPTIONS MATCHES JSON
 
 def test_themes_menu_matches_themes_json(app):
     menubar = passlock.menubar
