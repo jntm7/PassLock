@@ -1,5 +1,7 @@
 # Automatic CI that runs conditionally when [ci] is found in head commit message or pull request.
 # Manually run with workflow_dispatch.
+# Installs Tkinter and a virtual display server (xvfb) to test app UI is rendered properly.
+
 name: Python CI
 
 on:
@@ -34,6 +36,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
 
+      - name: Install system dependencies
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y python3-tk xvfb
+      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -45,4 +52,4 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest -q
+          xvfb-run -a python -m pytest -v
