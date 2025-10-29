@@ -838,219 +838,237 @@ def open_batch_password_generator():
     
 ################################################################
 
-# APP GUI
-app = tk.Tk()
-app.title("PassLock Password Generator")
-app.geometry("750x900")
-app.resizable(False, False)
+# APP INITIALIZATION
+def create_app():
+    # GLOBAL VARIABLES
+    global app, menubar, file_menu, password_menu, options_menu, font_size_menu
+    global window_size_menu, opacity_menu, theme_menu, tools_menu, presets_menu, help_menu
+    global main_frame, length_entry, uppercase_entry, lowercase_entry, digits_entry
+    global special_entry, password_output, strength_label, exclude_similar_var
+    global save_password_var, password_var, password_visible
+    global password_label, strength_label_text
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-icon_path = os.path.join(script_dir, "icon.ico")
-try:
-    app.iconbitmap(icon_path)
-except tk.TclError:
-    print(f"Warning: Could not load icon from {icon_path}")
+    # APP GUI
+    app = tk.Tk()
+    app.title("PassLock Password Generator")
+    app.geometry("750x900")
+    app.resizable(False, False)
 
-app.columnconfigure(0, weight=1)
-app.columnconfigure(1, weight=1)
-app.rowconfigure(7, weight=1)
-app.rowconfigure(8, weight=1)
-app.rowconfigure(9, weight=1)
+    # SET ICON
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(script_dir, "icon.ico")
+    try:
+        app.iconbitmap(icon_path)
+    except tk.TclError:
+        print(f"Warning: Could not load icon from {icon_path}")
 
-# HOLD PASSWORD AS STRING VARIABLE
-password_var = tk.StringVar()
-password_var.set("")
+    # MAIN FRAME
+    app.columnconfigure(0, weight=1)
+    app.columnconfigure(1, weight=1)
+    app.rowconfigure(7, weight=1)
+    app.rowconfigure(8, weight=1)
+    app.rowconfigure(9, weight=1)
 
-# TRACK PASSWORD VISIBILITY
-password_visible = False
+    # HOLD PASSWORD AS STRING VARIABLE
+    password_var = tk.StringVar()
+    password_var.set("")
 
-################################################################
+    # TRACK PASSWORD VISIBILITY
+    password_visible = False
 
-## MENU BAR
+    ################################################################
 
-menubar = Menu(app)
-app.config(menu=menubar)
+    ## MENU BAR
 
-# FILE
+    menubar = Menu(app)
+    app.config(menu=menubar)
 
-file_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="File", menu=file_menu)
-file_menu.add_command(label="Reset", command=reset_form)
-file_menu.add_command(label="Save", command=save_password)
-file_menu.add_command(label="Save As", command=save_password_as)
-file_menu.add_command(label="Exit", command=exit_app)
+    # FILE
 
-# OPTIONS
+    file_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="Reset", command=reset_form)
+    file_menu.add_command(label="Save", command=save_password)
+    file_menu.add_command(label="Save As", command=save_password_as)
+    file_menu.add_command(label="Exit", command=exit_app)
 
-options_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Options", menu=options_menu)
+    # OPTIONS
 
-font_size_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Font Size", menu=font_size_menu)
-font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
-font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
-font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
+    options_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Options", menu=options_menu)
 
-window_size_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Window Size", menu=window_size_menu)
-window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
-window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
-window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
+    font_size_menu = Menu(options_menu, tearoff=0)
+    options_menu.add_cascade(label="Font Size", menu=font_size_menu)
+    font_size_menu.add_command(label="Small", command=lambda: change_font_size(8))
+    font_size_menu.add_command(label="Medium", command=lambda: change_font_size(10))
+    font_size_menu.add_command(label="Large", command=lambda: change_font_size(14))
 
-opacity_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
-opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.25))
-opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
-opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
-opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
-opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
-opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
-options_menu.add_separator()
+    window_size_menu = Menu(options_menu, tearoff=0)
+    options_menu.add_cascade(label="Window Size", menu=window_size_menu)
+    window_size_menu.add_command(label="Small", command=lambda: change_window_size(350, 420))
+    window_size_menu.add_command(label="Medium", command=lambda: change_window_size(500, 600))
+    window_size_menu.add_command(label="Large", command=lambda: change_window_size(800, 960))
 
-presets_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Presets", menu=presets_menu)
-presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
-presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
-presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
-options_menu.add_command(label="Reset to Default", command=reset_to_default)
+    opacity_menu = Menu(options_menu, tearoff=0)
+    options_menu.add_cascade(label="Window Opacity", menu=opacity_menu)
+    opacity_menu.add_command(label="25%", command=lambda: change_opacity(0.25))
+    opacity_menu.add_command(label="50%", command=lambda: change_opacity(0.50))
+    opacity_menu.add_command(label="65%", command=lambda: change_opacity(0.65))
+    opacity_menu.add_command(label="75%", command=lambda: change_opacity(0.75))
+    opacity_menu.add_command(label="85%", command=lambda: change_opacity(0.85))
+    opacity_menu.add_command(label="100%", command=lambda: change_opacity(1.0))
+    options_menu.add_separator()
 
-options_menu.add_separator()
-options_menu.add_command(label="Toggle Password Visibility", command=toggle_password_visibility)
+    presets_menu = Menu(options_menu, tearoff=0)
+    options_menu.add_cascade(label="Presets", menu=presets_menu)
+    presets_menu.add_command(label="Small", command=lambda: (change_font_size(8), change_window_size(350, 420)))
+    presets_menu.add_command(label="Medium", command=lambda: (change_font_size(10), change_window_size(500, 600)))
+    presets_menu.add_command(label="Large", command=lambda: (change_font_size(14), change_window_size(800, 960)))
+    options_menu.add_command(label="Reset to Default", command=reset_to_default)
 
-# THEME
+    options_menu.add_separator()
+    options_menu.add_command(label="Toggle Password Visibility", command=toggle_password_visibility)
 
-theme_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Themes", menu=theme_menu)
-theme_menu.add_command(label="Arctic", command=lambda: update_theme("Arctic"))
-theme_menu.add_command(label="Bamboo", command=lambda: update_theme("Bamboo"))
-theme_menu.add_command(label="Chocolate", command=lambda: update_theme("Chocolate"))
-theme_menu.add_command(label="Forest", command=lambda: update_theme("Forest"))
-theme_menu.add_command(label="Lavender", command=lambda: update_theme("Lavender"))
-theme_menu.add_command(label="Mint", command=lambda: update_theme("Mint"))
-theme_menu.add_command(label="Ocean", command=lambda: update_theme("Ocean"))
-theme_menu.add_command(label="Peach", command=lambda: update_theme("Peach"))
-theme_menu.add_command(label="Slate", command=lambda: update_theme("Slate"))
-theme_menu.add_command(label="Sunset", command=lambda: update_theme("Sunset"))
-theme_menu.add_separator()
-theme_menu.add_command(label="Default", command=lambda: update_theme("Default"))
-theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
+    # THEME
 
-# PASSWORD
+    theme_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Themes", menu=theme_menu)
+    theme_menu.add_command(label="Arctic", command=lambda: update_theme("Arctic"))
+    theme_menu.add_command(label="Bamboo", command=lambda: update_theme("Bamboo"))
+    theme_menu.add_command(label="Chocolate", command=lambda: update_theme("Chocolate"))
+    theme_menu.add_command(label="Forest", command=lambda: update_theme("Forest"))
+    theme_menu.add_command(label="Lavender", command=lambda: update_theme("Lavender"))
+    theme_menu.add_command(label="Mint", command=lambda: update_theme("Mint"))
+    theme_menu.add_command(label="Mocha", command=lambda: update_theme("Mocha"))
+    theme_menu.add_command(label="Ocean", command=lambda: update_theme("Ocean"))
+    theme_menu.add_command(label="Peach", command=lambda: update_theme("Peach"))
+    theme_menu.add_command(label="Slate", command=lambda: update_theme("Slate"))
+    theme_menu.add_command(label="Sunset", command=lambda: update_theme("Sunset"))
+    theme_menu.add_separator()
+    theme_menu.add_command(label="Default", command=lambda: update_theme("Default"))
+    theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
 
-password_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Password", menu=password_menu)
-password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
-password_menu.add_command(label="Open Passwords", command=open_saved_passwords)
+    # PASSWORD
 
-# TOOLS
+    password_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Password", menu=password_menu)
+    password_menu.add_command(label="Copy Password", command=copy_to_clipboard)
+    password_menu.add_command(label="Open Passwords", command=open_saved_passwords)
 
-tools_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Tools", menu=tools_menu)
-tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
-tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
-tools_menu.add_command(label="Decrypt Passwords", command=open_decrypt_window)
+    # TOOLS
 
-# HELP
-help_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Help", menu=help_menu)
-help_menu.add_command(label="About", command=open_documentation)
-help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
-help_menu.add_command(label="Sync to Cloud", command=sync_to_cloud)
+    tools_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Tools", menu=tools_menu)
+    tools_menu.add_command(label="Password Strength Checker", command=open_password_checker)
+    tools_menu.add_command(label="Batch Generator", command=open_batch_password_generator)
+    tools_menu.add_command(label="Decrypt Passwords", command=open_decrypt_window)
 
-################################################################
+    # HELP
+    help_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Help", menu=help_menu)
+    help_menu.add_command(label="About", command=open_documentation)
+    help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
+    help_menu.add_command(label="Sync to Cloud", command=sync_to_cloud)
 
-# MAIN FRAME
+    ################################################################
 
-main_frame = tk.Frame(app, padx=20, pady=20)
-main_frame.pack(fill=tk.BOTH, expand=True)
+    # MAIN FRAME
 
-for i in range(16):
-    main_frame.grid_rowconfigure(i, weight=1)
-main_frame.grid_columnconfigure(0, weight=1)
-main_frame.grid_columnconfigure(1, weight=1)
+    main_frame = tk.Frame(app, padx=20, pady=20)
+    main_frame.pack(fill=tk.BOTH, expand=True)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
+    for i in range(16):
+        main_frame.grid_rowconfigure(i, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(1, weight=1)
 
-tk.Label(main_frame, text="Enter the desired password length:").grid(row=1, column=0, sticky=tk.W)
-length_entry = tk.Entry(main_frame, width=10)
-length_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
-tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=2, column=0, sticky=tk.W)
-uppercase_entry = tk.Entry(main_frame, width=10)
-uppercase_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the desired password length:").grid(row=1, column=0, sticky=tk.W)
+    length_entry = tk.Entry(main_frame, width=10)
+    length_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
 
-tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=3, column=0, sticky=tk.W)
-lowercase_entry = tk.Entry(main_frame, width=10)
-lowercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=2, column=0, sticky=tk.W)
+    uppercase_entry = tk.Entry(main_frame, width=10)
+    uppercase_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
 
-tk.Label(main_frame, text="Enter the number of digits:").grid(row=4, column=0, sticky=tk.W)
-digits_entry = tk.Entry(main_frame, width=10)
-digits_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=3, column=0, sticky=tk.W)
+    lowercase_entry = tk.Entry(main_frame, width=10)
+    lowercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
 
-tk.Label(main_frame, text="Enter the number of special characters:").grid(row=5, column=0, sticky=tk.W)
-special_entry = tk.Entry(main_frame, width=10)
-special_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
+    tk.Label(main_frame, text="Enter the number of digits:").grid(row=4, column=0, sticky=tk.W)
+    digits_entry = tk.Entry(main_frame, width=10)
+    digits_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
 
-exclude_similar_var = tk.BooleanVar()
-exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
-exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
+    tk.Label(main_frame, text="Enter the number of special characters:").grid(row=5, column=0, sticky=tk.W)
+    special_entry = tk.Entry(main_frame, width=10)
+    special_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
 
-save_password_var = tk.BooleanVar()
-save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
-save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
+    exclude_similar_var = tk.BooleanVar()
+    exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
+    exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
+    save_password_var = tk.BooleanVar()
+    save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
+    save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
 
-generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
-generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
-password_label = tk.Label(main_frame, text="Generated Password:")
-password_label.grid(row=10, column=0, sticky=tk.W)
-password_output = tk.Label(main_frame, text="")
-password_output.grid(row=10, column=1, sticky=tk.E)
+    generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
+    generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
-strength_label_text = tk.Label(main_frame, text="Password Strength:")
-strength_label_text.grid(row=11, column=0, sticky=tk.W)
-strength_label = tk.Label(main_frame, text="")
-strength_label.grid(row=11, column=1, sticky=tk.E)
+    password_label = tk.Label(main_frame, text="Generated Password:")
+    password_label.grid(row=10, column=0, sticky=tk.W)
+    password_output = tk.Label(main_frame, text="")
+    password_output.grid(row=10, column=1, sticky=tk.E)
 
-encrypt_save_button = tk.Button(main_frame, text="Save as Encrypted Password", command=save_encrypted_password)
-encrypt_save_button.grid(row=12, column=0, columnspan=2, pady=5, sticky=tk.EW)
+    strength_label_text = tk.Label(main_frame, text="Password Strength:")
+    strength_label_text.grid(row=11, column=0, sticky=tk.W)
+    strength_label = tk.Label(main_frame, text="")
+    strength_label.grid(row=11, column=1, sticky=tk.E)
 
-separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
-separator.grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
+    encrypt_save_button = tk.Button(main_frame, text="Save as Encrypted Password", command=save_encrypted_password)
+    encrypt_save_button.grid(row=12, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
-toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
+    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator.grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
-copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
-copy_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
+    toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
+    toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-show_passwords_button = tk.Button(main_frame, text="Open Saved Passwords", command=open_saved_passwords)
-show_passwords_button.grid(row=16, column=0, columnspan=2, pady=5, sticky=tk.EW)
+    copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
+    copy_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-open_encrypted_passwords_button = tk.Button(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
-open_encrypted_passwords_button.grid(row=17, column=0, columnspan=2, pady=5, sticky=tk.EW)
+    show_passwords_button = tk.Button(main_frame, text="Open Saved Passwords", command=open_saved_passwords)
+    show_passwords_button.grid(row=16, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-app.bind('<Control-b>', lambda event: open_batch_password_generator())
-app.bind('<Control-c>', lambda event: copy_to_clipboard())
-app.bind('<Control-d>', lambda event: toggle_dark_mode())
-app.bind('<Control-e>', lambda event: save_encrypted_password())
-app.bind('<Control-g>', lambda event: generate_and_display_password())
-app.bind('<Control-h>', lambda event: open_password_checker())
-app.bind('<Control-o>', lambda event: open_saved_passwords())
-app.bind('<Control-s>', lambda event: save_password())
-app.bind('<Control-t>', lambda event: rotate_theme())
-app.bind('<Control-v>', lambda event: toggle_password_visibility())
-app.bind('<Control-x>', lambda event: exit_app())
+    open_encrypted_passwords_button = tk.Button(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
+    open_encrypted_passwords_button.grid(row=17, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-app.bind('<F1>', lambda event: open_keyboard_shortcuts())
-app.bind('<F2>', lambda event: open_documentation()) 
-app.bind('<F3>', lambda event: sync_to_cloud())
+    # KEY BINDINGS
+    app.bind('<Control-b>', lambda event: open_batch_password_generator())
+    app.bind('<Control-c>', lambda event: copy_to_clipboard())
+    app.bind('<Control-d>', lambda event: toggle_dark_mode())
+    app.bind('<Control-e>', lambda event: save_encrypted_password())
+    app.bind('<Control-g>', lambda event: generate_and_display_password())
+    app.bind('<Control-h>', lambda event: open_password_checker())
+    app.bind('<Control-o>', lambda event: open_saved_passwords())
+    app.bind('<Control-s>', lambda event: save_password())
+    app.bind('<Control-t>', lambda event: rotate_theme())
+    app.bind('<Control-v>', lambda event: toggle_password_visibility())
+    app.bind('<Control-x>', lambda event: exit_app())
+    app.bind('<F1>', lambda event: open_keyboard_shortcuts())
+    app.bind('<F2>', lambda event: open_documentation()) 
+    app.bind('<F3>', lambda event: sync_to_cloud())
 
-app.mainloop()
+    return app
+
+# ENTRY POINT
+def run_app():
+    create_app()
+    app.mainloop()
 
 # GUARD FOR TESTS
 if __name__ == "__main__":
