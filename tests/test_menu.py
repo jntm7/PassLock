@@ -17,7 +17,18 @@ def app():
 def test_menubar_top_level_labels(app):
     menubar = passlock.menubar
     end_index = menubar.index('end')
-    labels = [menubar.entrycget(i, "label") for i in range(end_index + 1)]
+
+    labels = []
+    for i in range(end_index + 1):
+        try:
+            menu_type = menubar.type(i)
+            # CHECK ONLY CASCADE MENUS
+            if menu_type == 'cascade':
+                label = menubar.entrycget(i, 'label')
+                labels.append(label)
+        except tk.TclError:
+            continue
+
     expected = {"File", "Options", "Themes", "Password", "Tools", "Help"}
     assert expected.issubset(set(labels))
 
