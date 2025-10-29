@@ -1066,4 +1066,4 @@ def run_app():
 
 # GUARD FOR TESTS
 if __name__ == "__main__":
-    app.mainloop()
+    run_app()
