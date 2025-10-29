@@ -1,13 +1,14 @@
 import random
 import string
 import tkinter as tk
+import customtkinter as ctk
 import pyperclip
 import os
 import sys
 import subprocess
 import json
 import platform
-import customtkinter
+
 from tkinter import filedialog, simpledialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
 from cryptography.fernet import Fernet
@@ -311,8 +312,8 @@ class PasswordNameWindow(simpledialog.Dialog):
 
     def body(self, master):
         self.geometry(f"{self.default_width}x{self.default_height}")
-        tk.Label(master, text="Enter a name for the password:").grid(row=0)
-        self.entry = tk.Entry(master)
+        ctk.CTkLabel(master, text="Enter a name for the password:").grid(row=0)
+        self.entry = ctk.CTkEntry(master)
         self.entry.grid(row=1, padx=5)
         return self.entry
 
@@ -473,12 +474,18 @@ def open_decrypt_window():
 # LIGHT / DARK MODE
 def toggle_dark_mode():
     global is_dark_mode
-    if current_theme != "Default":
-        messagebox.showinfo("Theme Conflict", "Dark mode is only available in the Default theme.")
-        return
+    #if current_theme != "Default":
+        #messagebox.showinfo("Theme Conflict", "Dark mode is only available in the Default theme.")
+        #return
 
     is_dark_mode = not is_dark_mode
 
+    if is_dark_mode:
+        ctk.set_appearance_mode("dark")
+    else:
+        ctk.set_appearance_mode("light")
+    
+    """"
     if is_dark_mode:
         bg_color = "black"
         fg_color = "white"
@@ -496,13 +503,13 @@ def toggle_dark_mode():
     main_frame.config(bg=bg_color)
     
     for widget in main_frame.winfo_children():
-        if isinstance(widget, tk.Label):
+        if isinstance(widget, ctk.CTkLabel):
             widget.config(bg=bg_color, fg=fg_color)
-        elif isinstance(widget, tk.Entry):
+        elif isinstance(widget, ctk.CTkEntry):
             widget.config(bg=entry_bg, fg=fg_color)
-        elif isinstance(widget, tk.Button):
+        elif isinstance(widget, ctk.CTkButton):
             widget.config(bg=button_bg, fg=button_fg)
-        elif isinstance(widget, tk.Checkbutton):
+        elif isinstance(widget, ctk.CTkCheckBox):
             widget.config(bg=bg_color, fg=fg_color)
 
     password_output.config(bg=bg_color, fg=fg_color)
@@ -513,9 +520,9 @@ def toggle_dark_mode():
         menu.config(bg=bg_color, fg=fg_color)
 
     for window in app.winfo_children():
-        if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
+        if isinstance(window, ctk.CTkToplevel) and hasattr(window, 'update_theme'):
             window.update_theme()
-
+    """
 # THEMES
 def update_theme(theme_name):
     global current_theme
@@ -529,13 +536,13 @@ def update_theme(theme_name):
     main_frame.config(bg=theme["bg"])
 
     for widget in main_frame.winfo_children():
-        if isinstance(widget, tk.Label):
+        if isinstance(widget, ctk.CTkLabel):
             widget.config(bg=theme["bg"], fg=theme["fg"])
-        elif isinstance(widget, tk.Entry):
+        elif isinstance(widget, ctk.CTkEntry):
             widget.config(bg=theme["entry_bg"], fg=theme["fg"])
-        elif isinstance(widget, tk.Button):
+        elif isinstance(widget, ctk.CTkButton):
             widget.config(bg=theme["button_bg"], fg=theme["button_fg"])
-        elif isinstance(widget, tk.Checkbutton):
+        elif isinstance(widget, ctk.CTkCheckBox):
             widget.config(bg=theme["bg"], fg=theme["fg"])
     
     password_output.config(bg=theme["bg"], fg=theme["fg"])
@@ -546,7 +553,7 @@ def update_theme(theme_name):
         menu.config(bg=theme["bg"], fg=theme["fg"])
 
     for window in app.winfo_children():
-        if isinstance(window, tk.Toplevel) and hasattr(window, 'update_theme'):
+        if isinstance(window, ctk.CTkToplevel) and hasattr(window, 'update_theme'):
             window.update_theme(theme_name)
 
 def rotate_theme():
@@ -603,7 +610,7 @@ def change_window_size(width, height):
 
 # PASSWORD STRENGTH CHECKER
 def open_password_checker():
-    checker_window = tk.Toplevel(app)
+    checker_window = ctk.CTkToplevel(app)
     checker_window.title("Password Strength Checker")
     checker_window.geometry("400x300")
     checker_window.resizable(False, False)
@@ -613,12 +620,12 @@ def open_password_checker():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    tk.Label(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+    ctk.CTkLabel(checker_window, text="Enter a password to check:").grid(row=0, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
     
-    entry_frame = tk.Frame(checker_window)
+    entry_frame = ctk.CTkFrame(checker_window)
     entry_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=5, sticky="nsew")
     
-    password_entry = tk.Entry(entry_frame, show="*", width=50)
+    password_entry = ctk.CTkEntry(entry_frame, show="*", width=50)
     password_entry.pack(side=tk.LEFT, anchor=tk.CENTER, padx=(0, 5))
     
     def toggle_password_visibility():
@@ -632,10 +639,10 @@ def open_password_checker():
             toggle_button.config(text="Hide")
             password_visible = True
     
-    toggle_button = tk.Button(entry_frame, text="Show", command=toggle_password_visibility)
+    toggle_button = ctk.CTkButton(entry_frame, text="Show", command=toggle_password_visibility)
     toggle_button.pack(side=tk.LEFT, padx=(5, 0))
     
-    result_label = tk.Label(checker_window, text="")
+    result_label = ctk.CTkLabel(checker_window, text="")
     result_label.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
     
     canvas = tk.Canvas(checker_window, width=200, height=20, highlightthickness=0)
@@ -647,7 +654,7 @@ def open_password_checker():
     checker_window.grid_rowconfigure(1, weight=1)
     checker_window.grid_rowconfigure(2, weight=1)
     checker_window.grid_rowconfigure(3, weight=1)
-
+    """
     def update_checker_theme(new_theme=None):
         if new_theme:
             theme = themes[new_theme]
@@ -669,22 +676,23 @@ def open_password_checker():
 
         checker_window.config(bg=bg_color)
         for widget in checker_window.winfo_children():
-            if isinstance(widget, tk.Label):
+            if isinstance(widget, ctk.CTkLabel):
                 widget.config(bg=bg_color, fg=fg_color)
-            elif isinstance(widget, tk.Entry):
+            elif isinstance(widget, ctk.CTkEntry):
                 widget.config(bg=entry_bg, fg=fg_color)
-            elif isinstance(widget, tk.Button):
+            elif isinstance(widget, ctk.CTkButton):
                 widget.config(bg=button_bg, fg=button_fg)
-            elif isinstance(widget, tk.Frame):
+            elif isinstance(widget, ctk.CTkFrame):
                 widget.config(bg=bg_color)
                 for sub_widget in widget.winfo_children():
-                    if isinstance(sub_widget, tk.Entry):
+                    if isinstance(sub_widget, ctk.CTkEntry):
                         sub_widget.config(bg=entry_bg, fg=fg_color)
-                    elif isinstance(sub_widget, tk.Button):
+                    elif isinstance(sub_widget, ctk.CTkButton):
                         sub_widget.config(bg=button_bg, fg=button_fg)
         canvas.config(bg=bg_color)
 
     update_checker_theme(current_theme)
+    """
 
     def check_strength():
         password = password_entry.get()
@@ -701,10 +709,10 @@ def open_password_checker():
         canvas.delete("all")
         canvas.create_rectangle(padding_x, 0, padding_x + rect_width, 20, fill=strength_colors[strength], outline="")
 
-    check_button = tk.Button(checker_window, text="Check Strength", width=25, command=check_strength)
+    check_button = ctk.CTkButton(checker_window, text="Check Strength", width=25, command=check_strength)
     check_button.grid(row=4, column=0, pady=10, padx=(100, 50), sticky="nsew")
 
-    checker_window.update_theme = update_checker_theme
+    #checker_window.update_theme = update_checker_theme
 
 # BATCH GENERATOR
 
@@ -716,7 +724,7 @@ def batch_generate_passwords(count, length, num_uppercase, num_lowercase, num_di
     return passwords
 
 def open_batch_password_generator():
-    batch_generator_window = tk.Toplevel(app)
+    batch_generator_window = ctk.CTkToplevel(app)
     batch_generator_window.title("Batch Password Generator")
     batch_generator_window.geometry("400x500")
     batch_generator_window.resizable(False, False)
@@ -726,7 +734,7 @@ def open_batch_password_generator():
     except tk.TclError:
         print(f"Warning: Could not load icon from {icon_path}")
 
-    main_frame = tk.Frame(batch_generator_window, padx=20, pady=20)
+    main_frame = ctk.CTkFrame(batch_generator_window, padx=20, pady=20)
     main_frame.pack(fill=tk.BOTH, expand=True)
 
     for i in range(9):
@@ -734,38 +742,38 @@ def open_batch_password_generator():
     main_frame.grid_columnconfigure(0, weight=1)
     main_frame.grid_columnconfigure(1, weight=1)
 
-    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator = ctk.CTkFrame(main_frame, height=2, bd=1)
     separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
-    tk.Label(main_frame, text="Enter the number of passwords to generate:").grid(row=1, column=0, sticky=tk.W)
-    count_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of passwords to generate:").grid(row=1, column=0, sticky=tk.W)
+    count_entry = ctk.CTkEntry(main_frame, width=10)
     count_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the desired password length:").grid(row=2, column=0, sticky=tk.W)
-    length_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the desired password length:").grid(row=2, column=0, sticky=tk.W)
+    length_entry = ctk.CTkEntry(main_frame, width=10)
     length_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=3, column=0, sticky=tk.W)
-    uppercase_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of uppercase letters:").grid(row=3, column=0, sticky=tk.W)
+    uppercase_entry = ctk.CTkEntry(main_frame, width=10)
     uppercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=4, column=0, sticky=tk.W)
-    lowercase_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of lowercase letters:").grid(row=4, column=0, sticky=tk.W)
+    lowercase_entry = ctk.CTkEntry(main_frame, width=10)
     lowercase_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of digits:").grid(row=5, column=0, sticky=tk.W)
-    digits_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of digits:").grid(row=5, column=0, sticky=tk.W)
+    digits_entry = ctk.CTkEntry(main_frame, width=10)
     digits_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of special characters:").grid(row=6, column=0, sticky=tk.W)
-    special_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of special characters:").grid(row=6, column=0, sticky=tk.W)
+    special_entry = ctk.CTkEntry(main_frame, width=10)
     special_entry.grid(row=6, column=1, sticky=tk.E, padx=10, pady=5)
 
     exclude_similar_var = tk.BooleanVar()
-    exclude_similar_check = tk.Checkbutton(main_frame, text="Exclude similar characters", variable=exclude_similar_var)
+    exclude_similar_check = ctk.CTkCheckBox(main_frame, text="Exclude similar characters", variable=exclude_similar_var)
     exclude_similar_check.grid(row=7, column=0, columnspan=2, sticky=tk.W, padx=10, pady=5)
 
-    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator = ctk.CTkFrame(main_frame, height=2, bd=1)
     separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
     def on_generate_passwords():
@@ -795,7 +803,7 @@ def open_batch_password_generator():
 
         except ValueError as e:
             messagebox.showerror("Input Error", str(e))
-
+    """
     def update_batch_generator_theme(new_theme=None):
         if new_theme:
             theme = themes[new_theme]
@@ -818,23 +826,23 @@ def open_batch_password_generator():
         batch_generator_window.config(bg=bg_color)
         main_frame.config(bg=bg_color)
         for widget in main_frame.winfo_children():
-            if isinstance(widget, tk.Label):
+            if isinstance(widget, ctk.CTkLabel):
                 widget.config(bg=bg_color, fg=fg_color)
-            elif isinstance(widget, tk.Entry):
+            elif isinstance(widget, ctk.CTkEntry):
                 widget.config(bg=entry_bg, fg=fg_color)
-            elif isinstance(widget, tk.Button):
+            elif isinstance(widget, ctk.CTkButton):
                 widget.config(bg=button_bg, fg=button_fg)
-            elif isinstance(widget, tk.Checkbutton):
+            elif isinstance(widget, ctk.CTkCheckBox):
                 widget.config(bg=bg_color, fg=fg_color, selectcolor=bg_color)
         for separator in main_frame.winfo_children():
-            if isinstance(separator, tk.Frame):
+            if isinstance(separator, ctk.CTkFrame):
                 separator.config(bg=fg_color)
-
-    batch_generate_button = tk.Button(main_frame, text="Generate and Save", command=on_generate_passwords)
+        """
+    batch_generate_button = ctk.CTkButton(main_frame, text="Generate and Save", command=on_generate_passwords)
     batch_generate_button.grid(row=9, column=0, columnspan=2, pady=20, padx=10, sticky=tk.EW)
 
-    update_batch_generator_theme(current_theme)
-    batch_generator_window.update_theme = update_batch_generator_theme
+    #update_batch_generator_theme(current_theme)
+    #batch_generator_window.update_theme = update_batch_generator_theme
     
 ################################################################
 
@@ -849,10 +857,14 @@ def create_app():
     global password_label, strength_label_text
 
     # APP GUI
-    app = customtkinter.CTk()
+    app = ctk.CTk()
     app.title("PassLock Password Generator")
     app.geometry("750x900")
     app.resizable(False, False)
+
+    # APPEARANCE
+    ctk.set_appearance_mode("System")
+    ctk.set_default_color_theme("blue")
 
     # SET ICON
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -968,7 +980,7 @@ def create_app():
 
     # MAIN FRAME
 
-    main_frame = tk.Frame(app, padx=20, pady=20)
+    main_frame = ctk.CTkFrame(app, padx=20, pady=20)
     main_frame.pack(fill=tk.BOTH, expand=True)
 
     for i in range(16):
@@ -976,69 +988,69 @@ def create_app():
     main_frame.grid_columnconfigure(0, weight=1)
     main_frame.grid_columnconfigure(1, weight=1)
 
-    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator = ctk.CTkFrame(main_frame, height=2, bd=1)
     separator.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=(15, 15))
 
-    tk.Label(main_frame, text="Enter the desired password length:").grid(row=1, column=0, sticky=tk.W)
-    length_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the desired password length:").grid(row=1, column=0, sticky=tk.W)
+    length_entry = ctk.CTkEntry(main_frame, width=10)
     length_entry.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of uppercase letters:").grid(row=2, column=0, sticky=tk.W)
-    uppercase_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of uppercase letters:").grid(row=2, column=0, sticky=tk.W)
+    uppercase_entry = ctk.CTkEntry(main_frame, width=10)
     uppercase_entry.grid(row=2, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of lowercase letters:").grid(row=3, column=0, sticky=tk.W)
-    lowercase_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of lowercase letters:").grid(row=3, column=0, sticky=tk.W)
+    lowercase_entry = ctk.CTkEntry(main_frame, width=10)
     lowercase_entry.grid(row=3, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of digits:").grid(row=4, column=0, sticky=tk.W)
-    digits_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of digits:").grid(row=4, column=0, sticky=tk.W)
+    digits_entry = ctk.CTkEntry(main_frame, width=10)
     digits_entry.grid(row=4, column=1, sticky=tk.E, padx=10, pady=5)
 
-    tk.Label(main_frame, text="Enter the number of special characters:").grid(row=5, column=0, sticky=tk.W)
-    special_entry = tk.Entry(main_frame, width=10)
+    ctk.CTkLabel(main_frame, text="Enter the number of special characters:").grid(row=5, column=0, sticky=tk.W)
+    special_entry = ctk.CTkEntry(main_frame, width=10)
     special_entry.grid(row=5, column=1, sticky=tk.E, padx=10, pady=5)
 
     exclude_similar_var = tk.BooleanVar()
-    exclude_similar_checkbutton = tk.Checkbutton(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
+    exclude_similar_checkbutton = ctk.CTkCheckbox(main_frame, text="Exclude similar characters (O, 0, I, 1, l)", variable=exclude_similar_var)
     exclude_similar_checkbutton.grid(row=6, columnspan=2, sticky=tk.W)
 
     save_password_var = tk.BooleanVar()
-    save_password_checkbutton = tk.Checkbutton(main_frame, text="Save password to file", variable=save_password_var)
+    save_password_checkbutton = ctk.CTkCheckBox(main_frame, text="Save password to file", variable=save_password_var)
     save_password_checkbutton.grid(row=7, columnspan=2, sticky=tk.W)
-
-    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+ 
+    separator = ctk.CTkFrame(main_frame, height=2, bd=1)
     separator.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
-    generate_button = tk.Button(main_frame, text="Generate Password", command=generate_and_display_password)
+    generate_button = ctk.CTkButton(main_frame, text="Generate Password", command=generate_and_display_password)
     generate_button.grid(row=9, column=0, columnspan=2, pady=10, sticky=tk.EW)
 
-    password_label = tk.Label(main_frame, text="Generated Password:")
+    password_label = ctk.CTkLabel(main_frame, text="Generated Password:")
     password_label.grid(row=10, column=0, sticky=tk.W)
-    password_output = tk.Label(main_frame, text="")
+    password_output = ctk.CTkLabel(main_frame, text="")
     password_output.grid(row=10, column=1, sticky=tk.E)
 
-    strength_label_text = tk.Label(main_frame, text="Password Strength:")
+    strength_label_text = ctk.CTkLabel(main_frame, text="Password Strength:")
     strength_label_text.grid(row=11, column=0, sticky=tk.W)
-    strength_label = tk.Label(main_frame, text="")
+    strength_label = ctk.CTkLabel(main_frame, text="")
     strength_label.grid(row=11, column=1, sticky=tk.E)
 
-    encrypt_save_button = tk.Button(main_frame, text="Save as Encrypted Password", command=save_encrypted_password)
+    encrypt_save_button = ctk.CTkButton(main_frame, text="Save as Encrypted Password", command=save_encrypted_password)
     encrypt_save_button.grid(row=12, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-    separator = tk.Frame(main_frame, height=2, bd=1, relief=tk.SUNKEN)
+    separator = ctk.CTkFrame(main_frame, height=2, bd=1)
     separator.grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=(5, 5))
 
-    toggle_visibility_button = tk.Button(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
+    toggle_visibility_button = ctk.CTkButton(main_frame, text="Toggle Password Visibility", command=toggle_password_visibility)
     toggle_visibility_button.grid(row=14, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-    copy_button = tk.Button(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
+    copy_button = ctk.CTkButton(main_frame, text="Copy Password to Clipboard", command=copy_to_clipboard)
     copy_button.grid(row=15, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-    show_passwords_button = tk.Button(main_frame, text="Open Saved Passwords", command=open_saved_passwords)
+    show_passwords_button = ctk.CTkButton(main_frame, text="Open Saved Passwords", command=open_saved_passwords)
     show_passwords_button.grid(row=16, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
-    open_encrypted_passwords_button = tk.Button(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
+    open_encrypted_passwords_button = ctk.CTkButton(main_frame, text="Open Encrypted Passwords", command=open_encrypted_passwords)
     open_encrypted_passwords_button.grid(row=17, column=0, columnspan=2, pady=5, sticky=tk.EW)
 
     # KEY BINDINGS
