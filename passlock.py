@@ -7,6 +7,7 @@ import sys
 import subprocess
 import json
 import platform
+import customtkinter
 from tkinter import filedialog, simpledialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
 from cryptography.fernet import Fernet
@@ -15,7 +16,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
-import json
 
 # IMPORT WINDLL ONLY IF ON WINDOWS
 if os.name == 'nt':
@@ -849,7 +849,7 @@ def create_app():
     global password_label, strength_label_text
 
     # APP GUI
-    app = tk.Tk()
+    app = customtkinter.CTk()
     app.title("PassLock Password Generator")
     app.geometry("750x900")
     app.resizable(False, False)
@@ -1066,4 +1066,4 @@ def run_app():
 
 # GUARD FOR TESTS
 if __name__ == "__main__":
-    app.mainloop()
+    run_app()
