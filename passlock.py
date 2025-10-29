@@ -933,17 +933,11 @@ def create_app():
 
     theme_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Themes", menu=theme_menu)
-    theme_menu.add_command(label="Arctic", command=lambda: update_theme("Arctic"))
-    theme_menu.add_command(label="Bamboo", command=lambda: update_theme("Bamboo"))
-    theme_menu.add_command(label="Chocolate", command=lambda: update_theme("Chocolate"))
-    theme_menu.add_command(label="Forest", command=lambda: update_theme("Forest"))
-    theme_menu.add_command(label="Lavender", command=lambda: update_theme("Lavender"))
-    theme_menu.add_command(label="Mint", command=lambda: update_theme("Mint"))
-    theme_menu.add_command(label="Mocha", command=lambda: update_theme("Mocha"))
-    theme_menu.add_command(label="Ocean", command=lambda: update_theme("Ocean"))
-    theme_menu.add_command(label="Peach", command=lambda: update_theme("Peach"))
-    theme_menu.add_command(label="Slate", command=lambda: update_theme("Slate"))
-    theme_menu.add_command(label="Sunset", command=lambda: update_theme("Sunset"))
+
+    for theme_name in sorted(themes.keys()):
+        if theme_name != "Default":
+            theme_menu.add_command(label=theme_name, command=lambda name=theme_name: update_theme(name))
+
     theme_menu.add_separator()
     theme_menu.add_command(label="Default", command=lambda: update_theme("Default"))
     theme_menu.add_command(label="Dark Mode (On/Off)", command=toggle_dark_mode)
