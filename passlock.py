@@ -23,6 +23,7 @@ if os.name == 'nt':
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
 
+########################### PATHS #####################################
 # BASE PATH
 if hasattr(sys, '_MEIPASS'):
     base_path = sys._MEIPASS
@@ -33,29 +34,10 @@ else:
 icon_path = os.path.join(base_path, "icon.ico")
 
 # THEME PATH
-themes_path = os.path.join(base_path, "themes.json")
+THEMES_DIR = os.path.join(base_path, "themes")
 
-# LOAD THEMES
-with open(themes_path, "r") as file:
-    themes = json.load(file)
-
-# DEFAULT THEME
-current_theme_index = 0
-
-# THEME INDEX
-current_theme = list(themes.keys())[current_theme_index]
-
-# DEFAULT SETTINGS
-is_dark_mode = False
-def reset_to_default():
-    global current_font_size, current_opacity
-    current_font_size = 10
-    current_opacity = 1.0
-    change_font_size(current_font_size)
-    change_opacity(current_opacity)
-    change_window_size(500, 600)
-    if is_dark_mode:
-        toggle_dark_mode()
+# CONFIG FILE
+CONFIG_FILE = "config.json"
 
 # GENERATED PASSWORDS FILE
 GENERATED_PASSWORDS_FILE = "generated_passwords.txt"
@@ -66,6 +48,147 @@ ENCRYPTED_PASSWORDS_FILE = "encrypted_passwords.txt"
 # ENCRYPTED KEY FILE
 KEY_FILE = "encryption_key.key"
 
+############################# CONFIGURATION ###################################
+
+# LOAD CONFIG
+def load_config(): 
+    """Load User Configuration"""
+    default_config = {
+        "theme": "blue",
+        "appearance_mode": "light",
+        "font_size": 10,
+        "window_width": 750,
+        "window_height": 900,
+        "opacity": 1.0
+    }
+
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                user_config = json.load(f)
+                default_config.update(user_config)
+        except Exception as e:
+            print(f"Could not load config: {e}")
+    
+    return default_config
+
+# SAVE CONFIG
+def save_config(config):
+    """Save User Configuration"""
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(config, f, indent=2)
+    except Exception as e:
+        print(f"Could not save config: {e}")
+
+# UPDATE CONFIG
+def update_config_value(key, value):
+    """Update a single config value"""
+    config = load_config()
+    config[key] = value
+    save_config(config)
+
+user_config = load_config()
+
+############################## THEMES ##################################
+
+# GET THEMES
+def get_available_themes():
+    """Get list of available custom themes"""
+    custom_themes = []
+    if os.path.exists(THEMES_DIR):
+        custom_themes = [
+            f.replace('.json', '') 
+            for f in os.listdir(THEMES_DIR) 
+            if f.endswith('.json')
+        ]
+    
+    # CTk BUILT-IN THEMES
+    builtin_themes = ["blue", "green", "dark-blue"]
+    
+    return {
+        "custom": sorted(custom_themes),
+        "builtin": builtin_themes
+    }
+
+# APPLY THEME ON STARTUP
+def apply_theme_on_startup(theme_name):
+    """Apply theme before creating the app (no restart needed)"""
+    if theme_name in get_available_themes()["builtin"]:
+        ctk.set_default_color_theme(theme_name)
+    else:
+        theme_path = os.path.join(THEMES_DIR, f"{theme_name}.json")
+        if os.path.exists(theme_path):
+            ctk.set_default_color_theme(theme_path)
+        else:
+            ctk.set_default_color_theme("blue")
+
+# SELECT THEME
+def select_theme(theme_name):
+    """User selects a theme from menu"""
+    update_config_value("theme", theme_name)
+    
+    result = messagebox.askyesnocancel(
+        "Theme Changed",
+        f"Theme '{theme_name.capitalize()}' has been set as your default.\n\n"
+        "The theme will apply when you restart the app.\n\n"
+        "Would you like to restart now?\n\n"
+        "Yes: Restart now\n"
+        "No: Apply on next launch\n"
+        "Cancel: Undo change"
+    )
+    
+    if result is True:
+        restart_app()
+    elif result is False:
+        messagebox.showinfo(
+            "Theme Saved",
+            f"Theme '{theme_name.capitalize()}' will be applied next time you start PassLock."
+        )
+
+# RESTART APPLICATION
+def restart_app():
+    """Restart the application"""
+    try:
+        app.destroy()
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+    except Exception as e:
+        messagebox.showerror("Restart Failed", f"Could not restart: {e}\nPlease restart manually.")
+
+# SET LIGHT/DARK MODE
+def set_appearance_mode(mode):
+    """Change appearance mode (light/dark)"""
+    update_config_value("appearance_mode", mode)
+    
+    result = messagebox.askyesno(
+        "Appearance Changed",
+        f"Appearance mode set to '{mode.capitalize()}'.\n\n"
+        "Restart now to apply?"
+    )
+    
+    if result:
+        restart_app()
+
+# CYCLE THEMES
+def cycle_themes():
+    """Cycle through themes with Ctrl+T"""
+    available_themes = get_available_themes()
+    all_themes = available_themes["custom"] + available_themes["builtin"]
+    
+    try:
+        current_index = all_themes.index(current_theme_name)
+        next_index = (current_index + 1) % len(all_themes)
+        next_theme = all_themes[next_index]
+        select_theme(next_theme)
+    except ValueError:
+        if all_themes:
+            select_theme(all_themes[0])
+
+# GLOBAL THEME TRACKING
+current_theme_name = user_config.get("theme", "blue")
+
+########################## RESET ######################################
 # RESET ENTRY FIELDS
 def reset_form():
 
@@ -85,6 +208,7 @@ def reset_form():
 def exit_app():
     app.quit()
 
+############################ HELP ####################################
 # SHORTCUT HELP
 def open_keyboard_shortcuts():
     shortcut_info = """
@@ -115,6 +239,7 @@ def open_keyboard_shortcuts():
 def open_documentation():
     open_new_tab("https://github.com/jntm7/PassLock")
 
+############################ CLOUD & OAUTH ####################################
 # CLOUD STORAGE SYNC
 def sync_to_cloud():
     try:
@@ -178,6 +303,8 @@ def sync_to_cloud():
 
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during Google Drive sync: {e}")
+
+############################ PASSWORD ####################################
 
 # PASSWORD GENERATION
 def generate_password(length, num_uppercase, num_lowercase, num_digits, num_special, exclude_similar):
@@ -374,9 +501,7 @@ def open_saved_passwords():
     else:
         messagebox.showinfo("No Saved Passwords", "No passwords have been saved yet!")
 
-################################################################
-
-# ENCRYPTION
+########################### ENCRYPTION #####################################
 
 # GENERATE ENCRYPTION KEY
 def generate_encryption_key():
@@ -433,11 +558,14 @@ def save_encrypted_password():
 def open_encrypted_passwords():
     if os.path.exists(ENCRYPTED_PASSWORDS_FILE):
         try:
-            if os.name == 'nt':  # Windows
+            # WINDOWS
+            if os.name == 'nt':
                 os.startfile(ENCRYPTED_PASSWORDS_FILE)
-            elif platform.system() == 'Darwin':  # macOS
+            # MACOS
+            elif platform.system() == 'Darwin':
                 subprocess.call(('open', ENCRYPTED_PASSWORDS_FILE))
-            else:  # Linux
+            # LINUX
+            else:
                 subprocess.call(('xdg-open', ENCRYPTED_PASSWORDS_FILE))
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while opening the file: {e}")
@@ -469,15 +597,11 @@ def open_decrypt_window():
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred while decrypting the passwords: {e}")
 
-################################################################
+############################ SETTINGS ####################################
 
 # LIGHT / DARK MODE
 def toggle_dark_mode():
     global is_dark_mode
-    #if current_theme != "Default":
-        #messagebox.showinfo("Theme Conflict", "Dark mode is only available in the Default theme.")
-        #return
-
     is_dark_mode = not is_dark_mode
 
     if is_dark_mode:
@@ -485,44 +609,6 @@ def toggle_dark_mode():
     else:
         ctk.set_appearance_mode("light")
     
-    """"
-    if is_dark_mode:
-        bg_color = "black"
-        fg_color = "white"
-        entry_bg = "gray15"
-        button_bg = "gray20"
-        button_fg = "white"
-    else:
-        bg_color = "SystemButtonFace"
-        fg_color = "black"
-        entry_bg = "white"
-        button_bg = "SystemButtonFace"
-        button_fg = "black"
-
-    app.config(bg=bg_color)
-    main_frame.config(bg=bg_color)
-    
-    for widget in main_frame.winfo_children():
-        if isinstance(widget, ctk.CTkLabel):
-            widget.config(bg=bg_color, fg=fg_color)
-        elif isinstance(widget, ctk.CTkEntry):
-            widget.config(bg=entry_bg, fg=fg_color)
-        elif isinstance(widget, ctk.CTkButton):
-            widget.config(bg=button_bg, fg=button_fg)
-        elif isinstance(widget, ctk.CTkCheckBox):
-            widget.config(bg=bg_color, fg=fg_color)
-
-    password_output.config(bg=bg_color, fg=fg_color)
-    strength_label.config(bg=bg_color, fg=fg_color)
-
-    menubar.config(bg=bg_color, fg=fg_color)
-    for menu in (file_menu, password_menu, options_menu, font_size_menu, window_size_menu, opacity_menu, theme_menu, presets_menu):
-        menu.config(bg=bg_color, fg=fg_color)
-
-    for window in app.winfo_children():
-        if isinstance(window, ctk.CTkToplevel) and hasattr(window, 'update_theme'):
-            window.update_theme()
-    """
 # THEMES
 def update_theme(theme_name):
     global current_theme
@@ -606,7 +692,7 @@ def change_opacity(opacity):
 def change_window_size(width, height):
     app.geometry(f"{width}x{height}")
 
-################################################################
+########################## PASSWORD FUNCTIONS ######################################
 
 # PASSWORD STRENGTH CHECKER
 def open_password_checker():
@@ -654,45 +740,6 @@ def open_password_checker():
     checker_window.grid_rowconfigure(1, weight=1)
     checker_window.grid_rowconfigure(2, weight=1)
     checker_window.grid_rowconfigure(3, weight=1)
-    """
-    def update_checker_theme(new_theme=None):
-        if new_theme:
-            theme = themes[new_theme]
-        else:
-            theme = themes[current_theme]
-        
-        if is_dark_mode:
-            bg_color = "black"
-            fg_color = "white"
-            entry_bg = "gray15"
-            button_bg = "gray20"
-            button_fg = "white"
-        else:
-            bg_color = theme["bg"]
-            fg_color = theme["fg"]
-            entry_bg = theme["entry_bg"]
-            button_bg = theme["button_bg"]
-            button_fg = theme["button_fg"]
-
-        checker_window.config(bg=bg_color)
-        for widget in checker_window.winfo_children():
-            if isinstance(widget, ctk.CTkLabel):
-                widget.config(bg=bg_color, fg=fg_color)
-            elif isinstance(widget, ctk.CTkEntry):
-                widget.config(bg=entry_bg, fg=fg_color)
-            elif isinstance(widget, ctk.CTkButton):
-                widget.config(bg=button_bg, fg=button_fg)
-            elif isinstance(widget, ctk.CTkFrame):
-                widget.config(bg=bg_color)
-                for sub_widget in widget.winfo_children():
-                    if isinstance(sub_widget, ctk.CTkEntry):
-                        sub_widget.config(bg=entry_bg, fg=fg_color)
-                    elif isinstance(sub_widget, ctk.CTkButton):
-                        sub_widget.config(bg=button_bg, fg=button_fg)
-        canvas.config(bg=bg_color)
-
-    update_checker_theme(current_theme)
-    """
 
     def check_strength():
         password = password_entry.get()
@@ -803,48 +850,12 @@ def open_batch_password_generator():
 
         except ValueError as e:
             messagebox.showerror("Input Error", str(e))
-    """
-    def update_batch_generator_theme(new_theme=None):
-        if new_theme:
-            theme = themes[new_theme]
-        else:
-            theme = themes[current_theme]
 
-        if is_dark_mode:
-            bg_color = "black"
-            fg_color = "white"
-            entry_bg = "gray15"
-            button_bg = "gray20"
-            button_fg = "white"
-        else:
-            bg_color = theme["bg"]
-            fg_color = theme["fg"]
-            entry_bg = theme["entry_bg"]
-            button_bg = theme["button_bg"]
-            button_fg = theme["button_fg"]
-
-        batch_generator_window.config(bg=bg_color)
-        main_frame.config(bg=bg_color)
-        for widget in main_frame.winfo_children():
-            if isinstance(widget, ctk.CTkLabel):
-                widget.config(bg=bg_color, fg=fg_color)
-            elif isinstance(widget, ctk.CTkEntry):
-                widget.config(bg=entry_bg, fg=fg_color)
-            elif isinstance(widget, ctk.CTkButton):
-                widget.config(bg=button_bg, fg=button_fg)
-            elif isinstance(widget, ctk.CTkCheckBox):
-                widget.config(bg=bg_color, fg=fg_color, selectcolor=bg_color)
-        for separator in main_frame.winfo_children():
-            if isinstance(separator, ctk.CTkFrame):
-                separator.config(bg=fg_color)
-        """
     batch_generate_button = ctk.CTkButton(main_frame, text="Generate and Save", command=on_generate_passwords)
     batch_generate_button.grid(row=9, column=0, columnspan=2, pady=20, padx=10, sticky=tk.EW)
 
-    #update_batch_generator_theme(current_theme)
-    #batch_generator_window.update_theme = update_batch_generator_theme
     
-################################################################
+########################### APP #####################################
 
 # APP INITIALIZATION
 def create_app():
@@ -888,7 +899,7 @@ def create_app():
     # TRACK PASSWORD VISIBILITY
     password_visible = False
 
-    ################################################################
+    ############################ MENU ####################################
 
     ## MENU BAR
 
@@ -976,9 +987,7 @@ def create_app():
     help_menu.add_command(label="Keyboard Shortcuts", command=open_keyboard_shortcuts)
     help_menu.add_command(label="Sync to Cloud", command=sync_to_cloud)
 
-    ################################################################
-
-    # MAIN FRAME
+    ############################## MAIN FRAME ##################################
 
     main_frame = ctk.CTkFrame(app, padx=20, pady=20)
     main_frame.pack(fill=tk.BOTH, expand=True)
