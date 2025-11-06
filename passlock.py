@@ -7,7 +7,6 @@ import sys
 import subprocess
 import json
 import platform
-import customtkinter
 from tkinter import filedialog, simpledialog, messagebox, Menu, font as tkfont
 from webbrowser import open_new_tab
 from cryptography.fernet import Fernet
@@ -849,7 +848,7 @@ def create_app():
     global password_label, strength_label_text
 
     # APP GUI
-    app = customtkinter.CTk()
+    app = tk.Tk()
     app.title("PassLock Password Generator")
     app.geometry("750x900")
     app.resizable(False, False)
